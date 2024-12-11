@@ -5,8 +5,6 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   UploadOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
 } from "@ant-design/icons-vue";
 
 const props = defineProps({
