@@ -52,7 +52,7 @@ const cards = ref([
             <a-input class="tw-w-[400px]" v-model:search="search" placeholder="Search" />
             <a-button class="tw-mx-3" type="primary">GO</a-button>
           </a-col>
-          <a-col class="tw-flex tw-flex-wrap md:tw-justify-end" :span="24" :md="12" :lg="12">
+          <a-col class="tw-flex md:tw-justify-end" :span="24" :md="12" :lg="12">
             <div class="tw-my-3">
               <a-select
               class="tw-w-[140px] tw-me-3"
