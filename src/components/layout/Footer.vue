@@ -3,11 +3,8 @@
 </script>
 <template>
   <a-layout>
-    <a-layout-footer style="text-align: center">
+    <a-layout-footer class="tw-text-center">
       Ant Design ©2018 Created by Ant UED
     </a-layout-footer>
   </a-layout>
 </template>
-<style>
-  
-</style>

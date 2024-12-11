@@ -1,21 +1,25 @@
 <script setup>
-import { ref,reactive } from "vue";
+import { ref } from "vue";
+
+import {
+  UserOutlined,
+  VideoCameraOutlined,
+  UploadOutlined,
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
+} from "@ant-design/icons-vue";
 
 const props = defineProps({
   collapsed: Boolean,
 });
 
-const onCollapse = (_collapsed, type) => {
-  console.log(_collapsed, type);
-  // if (type == "responsive") {
-  //   emit("update:collapsed", !props.collapsed);
-  // }
-};
+// const emit = defineEmits("update:collapsed");
 
-const selectedKeys = ref(['4']);
+
+
+const selectedKeys = ref(["1"]);
 
 </script>
-
 <template>
   <a-layout-sider v-model:collapsed="props.collapsed" :trigger="null" collapsible>
     <div class="logo" />
@@ -35,8 +39,4 @@ const selectedKeys = ref(['4']);
     </a-menu>
   </a-layout-sider>
 </template>
-<style scoped>
-.site-layout .site-layout-background {
-  background: #fff;
-}
-</style>
+<style></style>
