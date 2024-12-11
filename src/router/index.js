@@ -1,11 +1,12 @@
 import * as vueRouter from "vue-router";
 import Home from "@/views/Home.vue";
+import EventRegistration from "@/views/EventRegistration.vue";
 
 const routes = [
   {
     path: "/",
-    name: "home",
-    component: Home,
+    name: "eventRegistration",
+    component: EventRegistration,
   }
 ];
 
