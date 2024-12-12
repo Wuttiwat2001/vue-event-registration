@@ -47,7 +47,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div>
+  <div v-if="$route.meta.showContent">
     <a-typography-title class="tw-mb-1" :level="2"
       >Event Registration</a-typography-title
     >
@@ -58,18 +58,17 @@ onMounted(() => {
     <a-row>
       <a-col class="tw-my-5 tw-p-3 tw-bg-[#f5f5f5]" :span="24">
         <a-row>
-          <a-col class="tw-flex tw-my-3" :span="24" :md="12" :lg="12">
+          <a-col class="tw-flex tw-my-3" :span="24" :md="8" :lg="8">
             <a-input
-              class="tw-w-[400px]"
               v-model:search="search"
               placeholder="Search"
             />
             <a-button class="tw-mx-3" type="primary">GO</a-button>
           </a-col>
-          <a-col class="tw-flex md:tw-justify-end" :span="24" :md="12" :lg="12">
-            <div class="tw-my-3">
+          <a-col class="tw-flex md:tw-justify-end" :span="24" :md="16" :lg="16">
+            <div class="tw-my-3 tw-me-3">
               <a-select
-                class="tw-w-[140px] tw-me-3"
+                class="tw-w-[140px]"
                 placeholder="Select Month"
                 v-model:value="selectMonth"
               >
@@ -81,6 +80,9 @@ onMounted(() => {
                   {{ month.name }}
                 </a-select-option>
               </a-select>
+            </div>
+            <div class="tw-my-3 tw-me-3">
+              <a-date-picker v-model:value="selectYear" picker="year" />
             </div>
             <div class="tw-my-3">
               <a-date-picker v-model:value="selectYear" picker="year" />
@@ -107,6 +109,7 @@ onMounted(() => {
       </a-col>
     </a-row>
   </div>
+  <router-view v-else></router-view>
 </template>
 
 <style>
