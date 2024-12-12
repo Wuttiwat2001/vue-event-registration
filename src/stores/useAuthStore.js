@@ -1,6 +1,8 @@
 import api from "@/services/api";
 import { defineStore } from "pinia";
 import { ref, reactive } from "vue";
+import router from "../router";
+import { message } from "ant-design-vue";
 
 export const useAuthStore = defineStore("auth", () => {
   const user = reactive({
@@ -21,6 +23,9 @@ export const useAuthStore = defineStore("auth", () => {
         localStorage.setItem("token", JSON.stringify(token));
         localStorage.setItem("user", JSON.stringify(user));
         fetchingStatus.value = "success";
+
+        router.push("/event");
+        message.success(`${response.data.message}`);
       } else {
         fetchingStatus.value = "failed";
         user.isLoggedIn = false;
