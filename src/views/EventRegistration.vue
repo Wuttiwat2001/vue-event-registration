@@ -1,5 +1,10 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useEventStore } from "@/stores/useEventStore";
+import EventCard from "@/components/Card/EventCard.vue";
+
+const eventStore = useEventStore();
+
 const search = ref("");
 const selectMonth = ref(null);
 const selectYear = ref(null);
@@ -19,22 +24,27 @@ const months = ref([
 ]);
 
 const cards = ref([
-      {
-        alt: "example",
-        imgSrc: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-        title: "Card title 1",
-        description: "This is the description 1",
-        avatarSrc: "https://joeschmoe.io/api/v1/random"
-      },
-      {
-        alt: "example",
-        imgSrc: "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
-        title: "Card title 2",
-        description: "This is the description 2",
-        avatarSrc: "https://joeschmoe.io/api/v1/random"
-      },
-      // Add more card objects as needed
-    ]);
+  {
+    alt: "example",
+    imgSrc:
+      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+    title: "Card title 1",
+    description: "This is the description 1",
+    avatarSrc: "https://joeschmoe.io/api/v1/random",
+  },
+  {
+    alt: "example",
+    imgSrc:
+      "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png",
+    title: "Card title 2",
+    description: "This is the description 2",
+    avatarSrc: "https://joeschmoe.io/api/v1/random",
+  },
+]);
+
+onMounted(() => {
+  eventStore.fetchEvents();
+});
 </script>
 <template>
   <div>
@@ -49,24 +59,28 @@ const cards = ref([
       <a-col class="tw-my-5 tw-p-3 tw-bg-[#f5f5f5]" :span="24">
         <a-row>
           <a-col class="tw-flex tw-my-3" :span="24" :md="12" :lg="12">
-            <a-input class="tw-w-[400px]" v-model:search="search" placeholder="Search" />
+            <a-input
+              class="tw-w-[400px]"
+              v-model:search="search"
+              placeholder="Search"
+            />
             <a-button class="tw-mx-3" type="primary">GO</a-button>
           </a-col>
           <a-col class="tw-flex md:tw-justify-end" :span="24" :md="12" :lg="12">
             <div class="tw-my-3">
               <a-select
-              class="tw-w-[140px] tw-me-3"
-              placeholder="Select Month"
-              v-model:value="selectMonth"
-            >
-              <a-select-option
-                v-for="month in months"
-                :key="month.value"
-                :value="month.value"
+                class="tw-w-[140px] tw-me-3"
+                placeholder="Select Month"
+                v-model:value="selectMonth"
               >
-                {{ month.name }}
-              </a-select-option>
-            </a-select>
+                <a-select-option
+                  v-for="month in months"
+                  :key="month.value"
+                  :value="month.value"
+                >
+                  {{ month.name }}
+                </a-select-option>
+              </a-select>
             </div>
             <div class="tw-my-3">
               <a-date-picker v-model:value="selectYear" picker="year" />
@@ -76,26 +90,28 @@ const cards = ref([
       </a-col>
     </a-row>
 
-    <a-row :gutter="[16,16]">
-      <a-col :span="24" :lg="6" v-for="(card, index) in cards" :key="index">
-        <a-card hoverable>
-          <template #cover>
-            <img :alt="card.alt" :src="card.imgSrc" />
-          </template>
-          <template #actions>
-            <setting-outlined key="setting" />
-            <edit-outlined key="edit" />
-            <ellipsis-outlined key="ellipsis" />
-          </template>
-          <a-card-meta :title="card.title" :description="card.description">
-            <template #avatar>
-              <a-avatar :src="card.avatarSrc" />
-            </template>
-          </a-card-meta>
-        </a-card>
+    <a-row :gutter="[16, 16]">
+      <a-col
+        :span="24"
+        :lg="8"
+        v-for="(card, index) in eventStore.events"
+        :key="index"
+      >
+        <EventCard
+          :alt="card.alt"
+          imgSrc="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+          :title="card.title"
+          :description="card.description"
+          :avatarSrc="card.avatarSrc"
+        />
       </a-col>
     </a-row>
   </div>
 </template>
 
-<style></style>
+<style>
+.a-skeleton-image .ant-skeleton-image {
+  width: 150px; /* กำหนดความกว้าง */
+  height: 150px; /* กำหนดความสูง */
+}
+</style>
