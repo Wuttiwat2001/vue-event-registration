@@ -1,6 +1,7 @@
 import axios from "axios";
 import join from "url-join";
 import { apiUrl } from "@/services/constants";
+import { message } from "ant-design-vue";
 
 const isAbsoluteURLRegex = /^(?:\w+:)\/\//;
 
@@ -32,13 +33,31 @@ httpClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response.status === 401) {
-      localStorage.removeItem("token");
-      window.location.href = "/";
+    const { response } = error;
+    if (response) {
+      switch (response.status) {
+        case 400:
+          message.error(`${response.data.message}`);
+          break;
+        case 401:
+          localStorage.removeItem("token");
+          window.location.href = "/";
+          break;
+        case 403:
+          console.error("Forbidden:", response.data.message);
+          break;
+        case 404:
+          message.error(`${response.data.message}`);
+          break;
+        case 500:
+          message.error(`${response.data.message}`);
+          break;
+        default:
+          message.error(`${response.data.message}`);
+      }
     }
     return Promise.reject(error);
   }
 );
-
 
 export default httpClient;
