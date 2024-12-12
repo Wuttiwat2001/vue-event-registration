@@ -40,6 +40,7 @@ httpClient.interceptors.response.use(
           message.error(`${response.data.message}`);
           break;
         case 401:
+          localStorage.removeItem("user");
           localStorage.removeItem("token");
           window.location.href = "/";
           break;
