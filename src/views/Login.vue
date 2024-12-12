@@ -24,9 +24,9 @@ const onFinish = (values) => {
         <a-row :gutter="[16, 16]">
           <a-col class="tw-px-10 tw-py-10 tw-bg-white" :span="24" :md="12">
             <div class="tw-text-center tw-mb-6">
-              <h2 class="tw-text-2xl">Welcome to Event Registration</h2>
+              <h2 class="tw-text-2xl">Admin Login</h2>
               <p class="tw-text-gray-500">
-                Please login to register for the event.
+                Please login to manage the admin dashboard.
               </p>
             </div>
             <a-form :model="formState" name="normal_login" @finish="onFinish">
@@ -36,7 +36,10 @@ const onFinish = (values) => {
                   { required: true, message: 'Please input your username!' },
                 ]"
               >
-                <a-input v-model:value="formState.username" placeholder="Username">
+                <a-input
+                  v-model:value="formState.username"
+                  placeholder="Username"
+                >
                   <template #prefix>
                     <user-outlined class="site-form-item-icon" />
                   </template>
@@ -49,23 +52,28 @@ const onFinish = (values) => {
                   { required: true, message: 'Please input your password!' },
                 ]"
               >
-                <a-input-password v-model:value="formState.password" placeholder="Password">
+                <a-input-password
+                  v-model:value="formState.password"
+                  placeholder="Password"
+                >
                   <template #prefix>
                     <lock-outlined class="site-form-item-icon" />
                   </template>
                 </a-input-password>
               </a-form-item>
               <a-form-item>
-                <a-button :loading="authStore.fetchingStatus === 'loading' ? true : false" type="primary" html-type="submit" block>
+                <a-button
+                  :loading="
+                    authStore.fetchingStatus === 'loading' ? true : false
+                  "
+                  type="primary"
+                  html-type="submit"
+                  block
+                >
                   Login
                 </a-button>
               </a-form-item>
             </a-form>
-            <div class="tw-text-center tw-mt-4">
-              <a href="/register" class="tw-text-blue-500"
-                >New here? Register now</a
-              >
-            </div>
           </a-col>
 
           <a-col class="tw-hidden md:tw-block" :span="24" :md="12">
