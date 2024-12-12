@@ -2,8 +2,14 @@ import * as vueRouter from "vue-router";
 import Home from "@/views/Home.vue";
 import EventRegistration from "@/views/EventRegistration.vue";
 import EventCreate from "@/views/EventCreate.vue";
+import Login from "@/views/Login.vue";
 
 const routes = [
+  {
+    path: "/",
+    name: "login",
+    component: Login,
+  },
   {
     path: "/event",
     name: "eventRegistration",
