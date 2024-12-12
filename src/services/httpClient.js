@@ -37,7 +37,7 @@ httpClient.interceptors.response.use(
     if (response) {
       switch (response.status) {
         case 400:
-          message.error(`${response.data.message}`);
+          message.error(`${response.data.error}`);
           break;
         case 401:
           localStorage.removeItem("user");

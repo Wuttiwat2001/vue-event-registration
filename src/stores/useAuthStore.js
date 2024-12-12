@@ -14,48 +14,38 @@ export const useAuthStore = defineStore("auth", () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
       const response = await api.login(username, password);
       if (response.status === 200 && response.data.success) {
+        Object.assign(user, response.data.data);
         user.isLoggedIn = true;
-        user = {
-          ...response.data.data,
-        };
-        token = response.data.token;
+        const token = response.data.token;
+
         localStorage.setItem("token", JSON.stringify(token));
         localStorage.setItem("user", JSON.stringify(user));
         fetchingStatus.value = "success";
       } else {
         fetchingStatus.value = "failed";
-        user = {
-          isLoggedIn: false,
-        };
+        user.isLoggedIn = false;
       }
     } catch (error) {
       fetchingStatus.value = "failed";
-      user = {
-        isLoggedIn: false,
-      };
-    } finally {
-      fetchingStatus.value = "success";
+      user.isLoggedIn = false;
     }
   }
 
   function restoreLogin() {
     const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-    if (token && user) {
-      user = JSON.parse(user);
+    const storedUser = localStorage.getItem("user");
+    if (token && storedUser) {
+      Object.assign(user, JSON.parse(storedUser));
+      user.isLoggedIn = true;
     } else {
-      user = {
-        isLoggedIn: false,
-      };
+      user.isLoggedIn = false;
     }
   }
 
   function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    user = {
-      isLoggedIn: false,
-    };
+    user.isLoggedIn = false;
   }
 
   return {
@@ -63,6 +53,6 @@ export const useAuthStore = defineStore("auth", () => {
     fetchingStatus,
     login,
     restoreLogin,
-    logout
+    logout,
   };
 });
