@@ -17,7 +17,8 @@ const onFinish = (values) => {
     type="flex"
     justify="center"
     align="middle"
-    style="height: 100vh; background-color: #f0f2f5"
+    style="height: 100vh"
+    class="tw-bg-[#f0f2f5] tw-px-10"
   >
     <a-col :span="24" style="max-width: 900px">
       <a-card :bodyStyle="{ padding: '0' }">
@@ -79,7 +80,7 @@ const onFinish = (values) => {
           <a-col class="tw-hidden md:tw-block" :span="24" :md="12">
             <div class="tw-h-full tw-flex tw-items-center tw-justify-center">
               <img
-                src="@/assets/images/appointment-agenda-reminder-personal-organizer-calendar-concept.jpg"
+                src="@/assets/images/corporate-event.jpg"
                 alt="Event Registration"
                 class="tw-max-w-full tw-h-full"
               />
