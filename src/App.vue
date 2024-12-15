@@ -25,7 +25,7 @@ const collapsed = ref(false);
     <a-layout class="tw-w-full tw-overflow-auto tw-flex tw-flex-col">
       <Header v-if="authStore.user.isLoggedIn" v-model:collapsed="collapsed" />
       <Content/>
-      <Footer v-if="authStore.user.isLoggedIn" />
+      <Footer />
     </a-layout>
   </a-layout>
 </template>

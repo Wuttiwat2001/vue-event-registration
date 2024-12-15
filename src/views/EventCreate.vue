@@ -1,7 +1,11 @@
 <script setup>
+import { useAuthStore } from "@/stores/useAuthStore";
 import { ref, reactive } from "vue";
 import { message } from "ant-design-vue";
 import { SaveOutlined, CloseOutlined,InboxOutlined } from "@ant-design/icons-vue";
+
+
+const authStore = useAuthStore();
 
 const form = reactive({
   title: "",
@@ -15,7 +19,7 @@ const form = reactive({
 
 const data = [
   {
-    title: 'Ant Design Title 1',
+    fullName: "",
   },
 ];
 
@@ -145,7 +149,7 @@ const handleSubmit = () => {
                   description="Create Event"
                 >
                   <template #title>
-                    <a href="https://www.antdv.com/">{{ item.title }}</a>
+                    <a href="https://www.antdv.com/">{{ authStore.user.firstName + " " + authStore.user.lastName }}</a>
                   </template>
                   <template #avatar>
                     <a-avatar src="https://joeschmoe.io/api/v1/random" />

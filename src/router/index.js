@@ -19,7 +19,7 @@ const routes = [
     children: [
       {
         path: "create",
-        name: "eventCreate",
+        name: "eventCreate",  
         component: EventCreate,
         meta: { showContent: false, isSecured: true },
       },
