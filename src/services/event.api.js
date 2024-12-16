@@ -1,7 +1,21 @@
 import httpClient from "@/services/httpClient";
 import { server } from "@/services/constants";
+import { useAuthStore } from "@/stores/useAuthStore";
 
-const findAll = async (
+const eventCreate = async (event) => {
+  const authStore = useAuthStore();
+  console.log(authStore.user);
+  return httpClient.post(`${server.EVENT_URL}`, {
+    ...event,
+    createdBy: authStore.user.id,
+  });
+};
+
+const eventFindOne = async (id) => {
+  return httpClient.get(`${server.EVENT_URL}/${id}`);
+};
+
+const eventFindAll = async (
   page,
   pageSize,
   search,
@@ -20,5 +34,7 @@ const findAll = async (
 };
 
 export default {
-  findAll,
+  eventCreate,
+  eventFindOne,
+  eventFindAll,
 };
