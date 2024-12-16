@@ -2,9 +2,9 @@
 import { ref, onMounted, computed } from "vue";
 import { useEventStore } from "@/stores/useEventStore";
 import filters from "@/helpers/filters";
-import { FormOutlined } from "@ant-design/icons-vue";
 import EventCreate from "@/components/Drawer/EventCreate.vue";
 import EventEdit from "@/components/Drawer/EventEdit.vue";
+import { DeleteOutlined } from "@ant-design/icons-vue";
 
 const eventStore = useEventStore();
 
@@ -191,7 +191,30 @@ const endItem = computed(() => {
   return Math.min(currentPage.value * pageSize.value, eventStore.totalEvents);
 });
 
+const handleEditEvent = () => {
+  eventStore.fetchEvents(
+    currentPage.value,
+    pageSize.value,
+    search.value,
+    availableSeats.value,
+    createdAtDate.value,
+    updatedAtDate.value
+  );
+};
+
 const handleCreateEvent = () => {
+  eventStore.fetchEvents(
+    currentPage.value,
+    pageSize.value,
+    search.value,
+    availableSeats.value,
+    createdAtDate.value,
+    updatedAtDate.value
+  );
+};
+
+const onClickSearchItem = async (value) => {
+  search.value = value;
   eventStore.fetchEvents(
     currentPage.value,
     pageSize.value,
@@ -257,7 +280,11 @@ onMounted(() => {
         </a-row>
         <a-row>
           <a-col class="tw-flex tw-my-3" :span="24" :md="12" :lg="12">
-            <a-input v-model:value="search" placeholder="Search" />
+            <a-input
+              @keyup.enter="searchTable"
+              v-model:value="search"
+              placeholder="Search"
+            />
             <a-button @click="searchTable" class="tw-mx-3" type="primary"
               >GO</a-button
             >
@@ -279,7 +306,7 @@ onMounted(() => {
                     :options="pageSizeOptions"
                     @change="(value) => handleTableChange(value, 'pageSize')"
                   ></a-select>
-                  <EventCreate  @createEvent="handleCreateEvent"  />
+                  <EventCreate @createEvent="handleCreateEvent" />
                 </a-col>
               </a-row>
             </a-col>
@@ -300,20 +327,29 @@ onMounted(() => {
                 <template #bodyCell="{ column, record }">
                   <template v-if="column.dataIndex === 'title'">
                     <div class="tw-w-[280px] tw-truncate">
-                      <a-typography-text strong>{{
-                        record.title
-                      }}</a-typography-text>
+                      <a-typography-text
+                        @click="onClickSearchItem(record.title)"
+                        class="trigger_text"
+                        strong
+                        >{{ record.title }}</a-typography-text
+                      >
                       <br />
-                      <a-typography-text type="secondary">{{
-                        record.description
-                      }}</a-typography-text>
+                      <a-typography-text
+                        @click="onClickSearchItem(record.description)"
+                        class="trigger_text"
+                        type="secondary"
+                        >{{ record.description }}</a-typography-text
+                      >
                     </div>
                   </template>
                   <template v-if="column.dataIndex === 'location'">
                     <div class="tw-w-[200px] tw-truncate">
-                      <a-typography-text strong>{{
-                        record.location
-                      }}</a-typography-text>
+                      <a-typography-text
+                        @click="onClickSearchItem(record.location)"
+                        class="trigger_text"
+                        strong
+                        >{{ record.location }}</a-typography-text
+                      >
                     </div>
                   </template>
 
@@ -355,7 +391,15 @@ onMounted(() => {
                   </template>
 
                   <template v-else-if="column.dataIndex === 'action'">
-                    <EventEdit :id="record._id" />
+                    <div class="tw-flex tw-justify-center">
+                      <EventEdit
+                        @editEvent="handleEditEvent"
+                        :id="record._id"
+                      />
+                      <delete-outlined
+                        class="trigger_icon tw-ms-2 tw-text-red-500"
+                      />
+                    </div>
                   </template>
                 </template>
               </a-table>
@@ -392,5 +436,12 @@ onMounted(() => {
 .trigger_text:hover {
   color: #1890ff !important;
   text-decoration: underline;
+}
+.trigger_icon {
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.trigger_icon:hover {
+  color: #ef4444 !important;
 }
 </style>
