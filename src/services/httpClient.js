@@ -51,7 +51,7 @@ httpClient.interceptors.response.use(
           message.error(`${response.data.message}`);
           break;
         case 500:
-          message.error(`${response.data.message}`);
+          message.error(`${response.data.error}`);
           break;
         default:
           message.error(`${response.data.message}`);
