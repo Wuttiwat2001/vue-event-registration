@@ -6,11 +6,11 @@ import { useAuthStore } from "@/stores/useAuthStore";
 const route = useRoute();
 const authStore = useAuthStore();
 
-const isRouteErrorPage = computed(() => route.name === "NotFound" || route.name === "Error");
+const isRouteErrorPage = computed(() => route.name === "notFoundPage" || route.name === "errorPage" || route.name === "authorizedPage");
 
 const layoutClasses = computed(() => {
   if (isRouteErrorPage.value) {
-    return "";
+    return "tw-bg-[#f0f2f5]";
   }
   return authStore.user.isLoggedIn ? "tw-p-6 tw-mx-6 tw-mt-4 tw-bg-white" : "";
 });

@@ -2,7 +2,9 @@ import * as vueRouter from "vue-router";
 import { useAuthStore } from "@/stores/useAuthStore";
 import EventRegistration from "@/views/EventRegistration.vue";
 import Login from "@/views/Login.vue";
-import NoFound from "@/views/NotFound.vue";
+import NoFoundPage from "@/views/NotFoundPage.vue";
+import ErrorPage from "@/views/ErrorPage.vue";
+import AuthorizedPage from "@/views/AuthorizedPage.vue";
 
 const routes = [
   {
@@ -17,9 +19,19 @@ const routes = [
     meta: { isSecured: true },
   },
   {
+    path: "/403",
+    name: "authorizedPage",
+    component: AuthorizedPage,
+  },
+  {
     path: "/404",
-    name: "NotFound",
-    component: NoFound,
+    name: "notFoundPage",
+    component: NoFoundPage,
+  },
+  {
+    path: "/500",
+    name: "errorPage",
+    component: ErrorPage,
   },
   {
     path: "/",
@@ -47,7 +59,7 @@ router.beforeEach((to, _from, next) => {
     }
   } else {
     if (authStore.user.isLoggedIn) {
-      if (to.name === "NotFound") {
+      if (to.name === "notFoundPage" || to.name === "errorPage" || to.name === "authorizedPage") {
         next();
       } else {
         router.push("/event");

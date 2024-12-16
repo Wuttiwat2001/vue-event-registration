@@ -9,7 +9,7 @@ import { useRoute } from "vue-router";
 const authStore = useAuthStore();
 const route = useRoute();
 
-const isRouteErrorPage = computed(() => route.name === "NotFound");
+const isRouteErrorPage = computed(() => route.name === "notFoundPage" || route.name === "errorPage" || route.name === "authorizedPage");
 
 onMounted(() => {
   authStore.restoreLogin();

@@ -2,6 +2,7 @@ import axios from "axios";
 import join from "url-join";
 import { apiUrl } from "@/services/constants";
 import { message } from "ant-design-vue";
+import router from "@/router";
 
 const isAbsoluteURLRegex = /^(?:\w+:)\/\//;
 
@@ -42,16 +43,19 @@ httpClient.interceptors.response.use(
         case 401:
           localStorage.removeItem("user");
           localStorage.removeItem("token");
-          window.location.href = "/";
+          router.push("/login");
           break;
         case 403:
-          console.error("Forbidden:", response.data.message);
+          console.error("Forbidden:", response.data.error);
+          router.push("/403");
           break;
         case 404:
-          message.error(`${response.data.message}`);
+          message.error(`${response.data.error}`);
+          router.push("/404");
           break;
         case 500:
           message.error(`${response.data.error}`);
+          router.push("/500");
           break;
         default:
           message.error(`${response.data.message}`);
