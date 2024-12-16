@@ -1,9 +1,8 @@
 import * as vueRouter from "vue-router";
 import { useAuthStore } from "@/stores/useAuthStore";
-import Home from "@/views/Home.vue";
 import EventRegistration from "@/views/EventRegistration.vue";
-import EventCreate from "@/views/EventCreate.vue";
 import Login from "@/views/Login.vue";
+import NoFound from "@/views/NotFound.vue";
 
 const routes = [
   {
@@ -15,21 +14,20 @@ const routes = [
     path: "/event",
     name: "eventRegistration",
     component: EventRegistration,
-    meta: { showContent: true, isSecured: true },
-    children: [
-      {
-        path: "create",
-        name: "eventCreate",  
-        component: EventCreate,
-        meta: { showContent: false, isSecured: true },
-      },
-      // {
-      //   path: "edit/:id",
-      //   name: "eventEdit",
-      //   component: EventEdit,
-      //   meta: { showContent: false },
-      // },
-    ],
+    meta: { isSecured: true },
+  },
+  {
+    path: "/404",
+    name: "NotFound",
+    component: NoFound,
+  },
+  {
+    path: "/",
+    redirect: "/login",
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    redirect: "/404",
   },
 ];
 
@@ -41,7 +39,6 @@ const router = vueRouter.createRouter({
 router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore();
 
-
   if (to.matched.some((record) => record.meta.isSecured)) {
     if (authStore.user.isLoggedIn) {
       next();
@@ -50,11 +47,11 @@ router.beforeEach((to, _from, next) => {
     }
   } else {
     if (authStore.user.isLoggedIn) {
-      // if (to.name === "NotFound") {
-      //   next();
-      // } else {
+      if (to.name === "NotFound") {
+        next();
+      } else {
         router.push("/event");
-      // }
+      }
     } else {
       next();
     }
