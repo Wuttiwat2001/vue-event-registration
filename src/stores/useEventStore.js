@@ -38,7 +38,7 @@ export const useEventStore = defineStore("event", () => {
       fetchingStatus.value = "failed";
       return null;
     }
-  }
+  };
 
   const fetchEvents = async (
     page,
@@ -87,9 +87,9 @@ export const useEventStore = defineStore("event", () => {
     } catch (error) {
       fetchingStatus.value = "failed";
     }
-  }
+  };
 
-  const  removeEvent = async (id) => {
+  const removeEvent = async (id) => {
     try {
       fetchingStatus.value = "loading";
       const response = await api.eventRemove(id);
@@ -102,7 +102,24 @@ export const useEventStore = defineStore("event", () => {
     } catch (error) {
       fetchingStatus.value = "failed";
     }
-  }
+  };
+
+  const fetchRegisteredUsers = async (id) => {
+    try {
+      fetchingStatus.value = "loading";
+      const response = await api.eventFindRegisteredUsers(id);
+      if (response.status === 200 && response.data.success) {
+        fetchingStatus.value = "success";
+        return response.data.data;
+      } else {
+        fetchingStatus.value = "failed";
+        return null;
+      }
+    } catch (error) {
+      fetchingStatus.value = "failed";
+      return null;
+    }
+  };
 
   return {
     events,
@@ -112,6 +129,7 @@ export const useEventStore = defineStore("event", () => {
     fetchEvents,
     createEvent,
     updateEvent,
-    removeEvent
+    removeEvent,
+    fetchRegisteredUsers
   };
 });

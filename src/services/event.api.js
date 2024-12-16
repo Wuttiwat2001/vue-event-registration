@@ -44,10 +44,15 @@ const eventRemove = async (id) => {
   return httpClient.delete(`${server.EVENT_URL}/remove/${id}`);
 };
 
+const eventFindRegisteredUsers = async (id) => {
+  return httpClient.get(`${server.EVENT_URL}/registered-users/${id}`);
+}
+
 export default {
   eventCreate,
   eventFindOne,
   eventFindAll,
   eventUpdate,
   eventRemove,
+  eventFindRegisteredUsers
 };
