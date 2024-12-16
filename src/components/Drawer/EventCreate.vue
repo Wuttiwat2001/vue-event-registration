@@ -5,7 +5,7 @@ import { message } from "ant-design-vue";
 import { useEventStore } from "@/stores/useEventStore";
 
 const eventStore = useEventStore();
-
+const emit = defineEmits(["createEvent"]);
 
 const form = reactive({
   title: "",
@@ -84,16 +84,23 @@ const onClose = () => {
   open.value = false;
 };
 
-
 const handleSubmit = (formRef) => {
-  formRef.validate().then(() => {
-    eventStore.createEvent(form);
-    onClose();
-  }).catch((error) => {
-    message.error(error.errorFields[0].errors);
-  });
+  formRef
+    .validate()
+    .then(() => {
+      try {
+        eventStore.createEvent(form);
+      } catch (error) {
+        message.error(error);
+      } finally {
+        emit("createEvent");
+        onClose();
+      }
+    })
+    .catch((error) => {
+      message.error(error.errorFields[0].errors);
+    });
 };
-
 </script>
 
 <template>
@@ -164,8 +171,17 @@ const handleSubmit = (formRef) => {
     </a-form>
     <template #extra>
       <a-space>
-        <a-button @click="onClose">Cancel</a-button>
-        <a-button type="primary" @click="handleSubmit($refs.formRef)">Submit</a-button>
+        <a-button
+          :loading="eventStore.fetchingStatus === 'loading' ? true : false"
+          @click="onClose"
+          >Cancel</a-button
+        >
+        <a-button
+          :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
+          type="primary"
+          @click="handleSubmit($refs.formRef)"
+          >Submit</a-button
+        >
       </a-space>
     </template>
   </a-drawer>

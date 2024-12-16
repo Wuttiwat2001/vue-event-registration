@@ -1,11 +1,46 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import api from "@/services/api";
+import { message } from "ant-design-vue";
 
 export const useEventStore = defineStore("event", () => {
   const events = ref([]);
   const fetchingStatus = ref("init");
   const totalEvents = ref(0);
+
+  const createEvent = async (event) => {
+    try {
+      fetchingStatus.value = "loading";
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const response = await api.eventCreate(event);
+      if (response.status === 201 && response.data.success) {
+        fetchingStatus.value = "success";
+        message.success(`${response.data.message}`);
+      } else {
+        fetchingStatus.value = "failed";
+      }
+    } catch (error) {
+      fetchingStatus.value = "failed";
+    }
+  };
+
+  const fetchEvent = async (id) => {
+    try {
+      fetchingStatus.value = "loading";
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const response = await api.eventFindOne(id);
+      if (response.status === 200 && response.data.success) {
+        fetchingStatus.value = "success";
+        return response.data.data;
+      } else {
+        fetchingStatus.value = "failed";
+        return null;
+      }
+    } catch (error) {
+      fetchingStatus.value = "failed";
+      return null;
+    }
+  }
 
   const fetchEvents = async (
     page,
@@ -13,12 +48,12 @@ export const useEventStore = defineStore("event", () => {
     search,
     availableSeats,
     createdAtDate,
-    updatedAtDate,
+    updatedAtDate
   ) => {
-    fetchingStatus.value = "loading";
     try {
+      fetchingStatus.value = "loading";
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const response = await api.findAll(
+      const response = await api.eventFindAll(
         page,
         pageSize,
         search,
@@ -45,6 +80,8 @@ export const useEventStore = defineStore("event", () => {
     events,
     fetchingStatus,
     totalEvents,
+    fetchEvent,
     fetchEvents,
+    createEvent,
   };
 });

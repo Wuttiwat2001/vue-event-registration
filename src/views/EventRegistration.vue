@@ -2,7 +2,9 @@
 import { ref, onMounted, computed } from "vue";
 import { useEventStore } from "@/stores/useEventStore";
 import filters from "@/helpers/filters";
-import { PlusOutlined, FormOutlined } from "@ant-design/icons-vue";
+import { FormOutlined } from "@ant-design/icons-vue";
+import EventCreate from "@/components/Drawer/EventCreate.vue";
+import EventEdit from "@/components/Drawer/EventEdit.vue";
 
 const eventStore = useEventStore();
 
@@ -189,6 +191,17 @@ const endItem = computed(() => {
   return Math.min(currentPage.value * pageSize.value, eventStore.totalEvents);
 });
 
+const handleCreateEvent = () => {
+  eventStore.fetchEvents(
+    currentPage.value,
+    pageSize.value,
+    search.value,
+    availableSeats.value,
+    createdAtDate.value,
+    updatedAtDate.value
+  );
+};
+
 onMounted(() => {
   eventStore.fetchEvents(
     currentPage.value,
@@ -266,10 +279,7 @@ onMounted(() => {
                     :options="pageSizeOptions"
                     @change="(value) => handleTableChange(value, 'pageSize')"
                   ></a-select>
-                  <a-button type="primary">
-                    <template #icon> <plus-outlined /> </template>Create
-                    Event</a-button
-                  >
+                  <EventCreate  @createEvent="handleCreateEvent"  />
                 </a-col>
               </a-row>
             </a-col>
@@ -345,7 +355,7 @@ onMounted(() => {
                   </template>
 
                   <template v-else-if="column.dataIndex === 'action'">
-                    <form-outlined class="tw-cursor-pointer trigger_icon" />
+                    <EventEdit :id="record._id" />
                   </template>
                 </template>
               </a-table>
@@ -374,13 +384,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.trigger_icon {
-  transition: color 0.3s;
-}
-.trigger_icon:hover {
-  color: #1890ff !important;
-}
-
 .trigger_text {
   cursor: pointer;
   transition: color 0.3s;
