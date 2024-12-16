@@ -11,7 +11,6 @@ export const useEventStore = defineStore("event", () => {
   const createEvent = async (event) => {
     try {
       fetchingStatus.value = "loading";
-      await new Promise((resolve) => setTimeout(resolve, 500));
       const response = await api.eventCreate(event);
       if (response.status === 201 && response.data.success) {
         fetchingStatus.value = "success";
@@ -27,7 +26,6 @@ export const useEventStore = defineStore("event", () => {
   const fetchEvent = async (id) => {
     try {
       fetchingStatus.value = "loading";
-      await new Promise((resolve) => setTimeout(resolve, 500));
       const response = await api.eventFindOne(id);
       if (response.status === 200 && response.data.success) {
         fetchingStatus.value = "success";
@@ -76,6 +74,21 @@ export const useEventStore = defineStore("event", () => {
     }
   };
 
+  const updateEvent = async (id, event) => {
+    try {
+      fetchingStatus.value = "loading";
+      const response = await api.eventUpdate(id, event);
+      if (response.status === 200 && response.data.success) {
+        fetchingStatus.value = "success";
+        message.success(`${response.data.message}`);
+      } else {
+        fetchingStatus.value = "failed";
+      }
+    } catch (error) {
+      fetchingStatus.value = "failed";
+    }
+  }
+
   return {
     events,
     fetchingStatus,
@@ -83,5 +96,6 @@ export const useEventStore = defineStore("event", () => {
     fetchEvent,
     fetchEvents,
     createEvent,
+    updateEvent
   };
 });

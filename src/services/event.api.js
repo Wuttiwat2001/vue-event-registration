@@ -4,7 +4,6 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 const eventCreate = async (event) => {
   const authStore = useAuthStore();
-  console.log(authStore.user);
   return httpClient.post(`${server.EVENT_URL}`, {
     ...event,
     createdBy: authStore.user.id,
@@ -33,8 +32,17 @@ const eventFindAll = async (
   });
 };
 
+const eventUpdate = async (id, event) => {
+  const authStore = useAuthStore();
+  return httpClient.put(`${server.EVENT_URL}/update/${id}`, {
+    ...event,
+    createdBy: authStore.user.id,
+  });
+};
+
 export default {
   eventCreate,
   eventFindOne,
   eventFindAll,
+  eventUpdate,
 };
