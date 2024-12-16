@@ -1,6 +1,6 @@
 import * as vueRouter from "vue-router";
 import { useAuthStore } from "@/stores/useAuthStore";
-import EventRegistration from "@/views/EventRegistration.vue";
+import EventRegistrationPage from "@/views/EventRegistrationPage.vue";
 import Login from "@/views/Login.vue";
 import NoFoundPage from "@/views/NotFoundPage.vue";
 import ErrorPage from "@/views/ErrorPage.vue";
@@ -14,8 +14,8 @@ const routes = [
   },
   {
     path: "/event",
-    name: "eventRegistration",
-    component: EventRegistration,
+    name: "eventRegistrationPage",
+    component: EventRegistrationPage,
     meta: { isSecured: true },
   },
   {

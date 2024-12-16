@@ -89,6 +89,21 @@ export const useEventStore = defineStore("event", () => {
     }
   }
 
+  const  removeEvent = async (id) => {
+    try {
+      fetchingStatus.value = "loading";
+      const response = await api.eventRemove(id);
+      if (response.status === 200 && response.data.success) {
+        fetchingStatus.value = "success";
+        message.success(`${response.data.message}`);
+      } else {
+        fetchingStatus.value = "failed";
+      }
+    } catch (error) {
+      fetchingStatus.value = "failed";
+    }
+  }
+
   return {
     events,
     fetchingStatus,
@@ -96,6 +111,7 @@ export const useEventStore = defineStore("event", () => {
     fetchEvent,
     fetchEvents,
     createEvent,
-    updateEvent
+    updateEvent,
+    removeEvent
   };
 });

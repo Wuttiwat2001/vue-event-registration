@@ -40,9 +40,14 @@ const eventUpdate = async (id, event) => {
   });
 };
 
+const eventRemove = async (id) => {
+  return httpClient.delete(`${server.EVENT_URL}/remove/${id}`);
+};
+
 export default {
   eventCreate,
   eventFindOne,
   eventFindAll,
   eventUpdate,
+  eventRemove,
 };

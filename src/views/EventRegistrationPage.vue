@@ -225,6 +225,18 @@ const onClickSearchItem = async (value) => {
   );
 };
 
+const deleteEvent = async (id) => {
+  await eventStore.removeEvent(id);
+  eventStore.fetchEvents(
+    currentPage.value,
+    pageSize.value,
+    search.value,
+    availableSeats.value,
+    createdAtDate.value,
+    updatedAtDate.value
+  );
+};
+
 onMounted(() => {
   eventStore.fetchEvents(
     currentPage.value,
@@ -390,9 +402,18 @@ onMounted(() => {
                 <template v-else-if="column.dataIndex === 'action'">
                   <div class="tw-flex tw-justify-center">
                     <EventEdit @editEvent="handleEditEvent" :id="record._id" />
-                    <delete-outlined
-                      class="trigger_icon tw-ms-2 tw-text-red-500"
-                    />
+
+                    <a-popconfirm
+                      title="Are you sure delete this event?"
+                      placement="topRight"
+                      ok-text="Yes"
+                      cancel-text="No"
+                      @confirm="() => deleteEvent(record._id)"
+                    >
+                      <delete-outlined
+                        class="trigger_icon tw-ms-2 tw-text-red-500"
+                      />
+                    </a-popconfirm>
                   </div>
                 </template>
               </template>
