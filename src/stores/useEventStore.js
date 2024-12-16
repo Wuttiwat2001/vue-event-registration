@@ -7,11 +7,25 @@ export const useEventStore = defineStore("event", () => {
   const fetchingStatus = ref("init");
   const totalEvents = ref(0);
 
-  const fetchEvents = async (page,pageSize,search,startDate,endDate) => {
+  const fetchEvents = async (
+    page,
+    pageSize,
+    search,
+    availableSeats,
+    createdAtDate,
+    updatedAtDate,
+  ) => {
     fetchingStatus.value = "loading";
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const response = await api.findAll(page,pageSize,search,startDate,endDate);
+      const response = await api.findAll(
+        page,
+        pageSize,
+        search,
+        availableSeats,
+        createdAtDate,
+        updatedAtDate
+      );
       if (response.status === 200 && response.data.success) {
         events.value = response.data.data;
         totalEvents.value = response.data.pagination.total;

@@ -2,15 +2,17 @@
 import { ref, onMounted, computed } from "vue";
 import { useEventStore } from "@/stores/useEventStore";
 import filters from "@/helpers/filters";
-import { PlusOutlined } from "@ant-design/icons-vue";
+import { PlusOutlined, FormOutlined } from "@ant-design/icons-vue";
 
 const eventStore = useEventStore();
 
 const search = ref("");
-const date = ref();
+const availableSeats = ref("any");
+const createdAtDate = ref([]);
+const updatedAtDate = ref([]);
 
 const currentPage = ref(1);
-const pageSize = ref(5);
+const pageSize = ref(10);
 const pageSizeOptions = [
   {
     value: 10,
@@ -38,74 +40,117 @@ const columns = [
   {
     title: "Title",
     dataIndex: "title",
+    width: 280,
   },
   {
     title: "Location",
     dataIndex: "location",
+    width: 200,
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    width: 120,
   },
   {
     title: "Total Seats",
     dataIndex: "totalSeats",
     width: 160,
+    sorter: (a, b) => a.totalSeats - b.totalSeats,
   },
   {
     title: "Remaining Seats",
     dataIndex: "remainingSeats",
     width: 160,
+    sorter: (a, b) => a.remainingSeats - b.remainingSeats,
   },
   {
     title: "Registered Users",
     dataIndex: "registeredUsers",
     width: 160,
+    sorter: (a, b) => a.registeredUsers.length - b.registeredUsers.length,
   },
   {
-    title: "CreatedAt",
+    title: "Created At",
     dataIndex: "createdAt",
     width: 160,
   },
   {
-    title: "UpdatedAt",
+    title: "Updated At",
     dataIndex: "updatedAt",
     width: 160,
+  },
+  {
+    title: "Action",
+    dataIndex: "action",
+    width: 80,
   },
 ];
 
 const searchTable = () => {
-  if (!date.value) {
+  eventStore.fetchEvents(
+    currentPage.value,
+    pageSize.value,
+    search.value,
+    availableSeats.value,
+    createdAtDate.value,
+    updatedAtDate.value
+  );
+};
+
+const selectAvailableSeats = () => {
+  eventStore.fetchEvents(
+    currentPage.value,
+    pageSize.value,
+    search.value,
+    availableSeats.value,
+    createdAtDate.value,
+    updatedAtDate.value
+  );
+};
+
+const selectCreatedAtDate = () => {
+  if (!createdAtDate.value) {
+    createdAtDate.value = [];
     eventStore.fetchEvents(
       currentPage.value,
       pageSize.value,
       search.value,
-      "",
-      ""
+      availableSeats.value,
+      createdAtDate.value,
+      updatedAtDate.value
     );
   } else {
     eventStore.fetchEvents(
       currentPage.value,
       pageSize.value,
       search.value,
-      date.value[0],
-      date.value[1]
+      availableSeats.value,
+      createdAtDate.value,
+      updatedAtDate.value
     );
   }
 };
 
-const selectDate = () => {
-  if (!date.value) {
+const selectUpdatedAtDate = () => {
+  if (!updatedAtDate.value) {
+    updatedAtDate.value = [];
     eventStore.fetchEvents(
       currentPage.value,
       pageSize.value,
       search.value,
-      "",
-      ""
+      availableSeats.value,
+      createdAtDate.value,
+      updatedAtDate.value
     );
   } else {
     eventStore.fetchEvents(
       currentPage.value,
       pageSize.value,
       search.value,
-      date.value[0],
-      date.value[1]
+      availableSeats.value,
+      createdAtDate.value,
+      updatedAtDate.value
     );
   }
 };
@@ -113,43 +158,26 @@ const selectDate = () => {
 const handleTableChange = (paginationOrPageSize, type) => {
   if (type === "pagination") {
     currentPage.value = paginationOrPageSize;
-    if (!date.value) {
-      eventStore.fetchEvents(
-        currentPage.value,
-        pageSize.value,
-        search.value,
-        "",
-        ""
-      );
-    } else {
-      eventStore.fetchEvents(
-        currentPage.value,
-        pageSize.value,
-        search.value,
-        date.value[0],
-        date.value[1]
-      );
-    }
+    eventStore.fetchEvents(
+      currentPage.value,
+      pageSize.value,
+      search.value,
+      availableSeats.value,
+      createdAtDate.value,
+      updatedAtDate.value
+    );
   } else if (type === "pageSize") {
     currentPage.value = 1;
     pageSize.value = paginationOrPageSize;
-    if (!date.value) {
-      eventStore.fetchEvents(
-        currentPage.value,
-        pageSize.value,
-        search.value,
-        "",
-        ""
-      );
-    } else {
-      eventStore.fetchEvents(
-        currentPage.value,
-        pageSize.value,
-        search.value,
-        date.value[0],
-        date.value[1]
-      );
-    }
+
+    eventStore.fetchEvents(
+      currentPage.value,
+      pageSize.value,
+      search.value,
+      availableSeats.value,
+      createdAtDate.value,
+      updatedAtDate.value
+    );
   }
 };
 
@@ -166,8 +194,9 @@ onMounted(() => {
     currentPage.value,
     pageSize.value,
     search.value,
-    "",
-    ""
+    availableSeats.value,
+    createdAtDate.value,
+    updatedAtDate.value
   );
 });
 </script>
@@ -182,16 +211,36 @@ onMounted(() => {
     >
     <a-row>
       <a-col class="tw-my-5 tw-p-3 tw-bg-[#f5f5f5]" :span="24">
-        <a-row :gutter="[16, 16]">
-          <a-col :span="24" :md="8" :lg="8">
-            <a-range-picker @change="selectDate" v-model:value="date" />
+        <a-row :gutter="[16, 0]">
+          <a-col class="tw-my-3" :span="24" :md="8" :lg="8">
+            <p>Available Seats</p>
+            <a-select
+              @change="selectAvailableSeats"
+              v-model:value="availableSeats"
+              placeholder="Select number of seats"
+              class="tw-w-full"
+            >
+              <a-select-option value="any">All</a-select-option>
+              <a-select-option value="available">Available</a-select-option>
+              <a-select-option value="full">Full</a-select-option>
+            </a-select>
           </a-col>
-          <!-- <a-col :span="24" :md="8" :lg="8">
-            <a-input v-model:search="search" placeholder="Search" />
+          <a-col class="tw-my-3" :span="24" :md="8" :lg="8">
+            <p>Created At</p>
+            <a-range-picker
+              @change="selectCreatedAtDate"
+              v-model:value="createdAtDate"
+              class="tw-w-full"
+            />
           </a-col>
-          <a-col :span="24" :md="8" :lg="8">
-            <a-input v-model:search="search" placeholder="Search" />
-          </a-col> -->
+          <a-col class="tw-my-3" :span="24" :md="8" :lg="8">
+            <p>Updated At</p>
+            <a-range-picker
+              @change="selectUpdatedAtDate"
+              v-model:value="updatedAtDate"
+              class="tw-w-full"
+            />
+          </a-col>
         </a-row>
         <a-row>
           <a-col class="tw-flex tw-my-3" :span="24" :md="12" :lg="12">
@@ -240,24 +289,46 @@ onMounted(() => {
               >
                 <template #bodyCell="{ column, record }">
                   <template v-if="column.dataIndex === 'title'">
-                    <div>
+                    <div class="tw-w-[280px] tw-truncate">
                       <a-typography-text strong>{{
                         record.title
                       }}</a-typography-text>
+                      <br />
+                      <a-typography-text type="secondary">{{
+                        record.description
+                      }}</a-typography-text>
                     </div>
-                    <a-typography-text type="secondary">{{
-                      record.description
-                    }}</a-typography-text>
                   </template>
                   <template v-if="column.dataIndex === 'location'">
-                    <a-typography-text strong>{{
-                      record.location
+                    <div class="tw-w-[200px] tw-truncate">
+                      <a-typography-text strong>{{
+                        record.location
+                      }}</a-typography-text>
+                    </div>
+                  </template>
+
+                  <template v-else-if="column.dataIndex === 'status'">
+                    <a-tag v-if="record.remainingSeats > 0" color="green"
+                      >Available</a-tag
+                    >
+                    <a-tag v-else color="red">Full</a-tag>
+                  </template>
+
+                  <template v-else-if="column.dataIndex === 'totalSeats'">
+                    <a-typography-text>{{
+                      filters.formatNumber(record.totalSeats)
+                    }}</a-typography-text>
+                  </template>
+
+                  <template v-else-if="column.dataIndex === 'remainingSeats'">
+                    <a-typography-text>{{
+                      filters.formatNumber(record.remainingSeats)
                     }}</a-typography-text>
                   </template>
 
                   <template v-else-if="column.dataIndex === 'registeredUsers'">
                     <a-typography-text strong>{{
-                      record.registeredUsers.length
+                      filters.formatNumber(record.registeredUsers.length)
                     }}</a-typography-text>
                   </template>
 
@@ -271,6 +342,10 @@ onMounted(() => {
                     <a-typography-text type="secondary">{{
                       filters.formatDate(record.updatedAt)
                     }}</a-typography-text>
+                  </template>
+
+                  <template v-else-if="column.dataIndex === 'action'">
+                    <form-outlined class="tw-cursor-pointer trigger_icon" />
                   </template>
                 </template>
               </a-table>
@@ -298,4 +373,21 @@ onMounted(() => {
   <router-view v-else></router-view>
 </template>
 
-<style></style>
+<style scoped>
+.trigger_icon {
+  transition: color 0.3s;
+}
+.trigger_icon:hover {
+  color: #1890ff !important;
+}
+
+.trigger_text {
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.trigger_text:hover {
+  color: #1890ff !important;
+  text-decoration: underline;
+}
+</style>
