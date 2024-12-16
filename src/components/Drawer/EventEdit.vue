@@ -8,8 +8,7 @@ const eventStore = useEventStore();
 const props = defineProps({
   id: String,
 });
-const emit = defineEmits(["createEvent"]);
-
+const emit = defineEmits(["editEvent"]);
 
 const form = reactive({
   title: "",
@@ -18,7 +17,6 @@ const form = reactive({
   remainingSeats: null,
   description: "",
 });
-
 
 const validateTotalSeats = (rule, value) => {
   if (value <= 0) {
@@ -74,13 +72,14 @@ const rules = {
 
 const open = ref(false);
 const showDrawer = async () => {
-  open.value = true;
   const event = await eventStore.fetchEvent(props.id);
   form.title = event.title;
   form.location = event.location;
   form.totalSeats = event.totalSeats;
   form.remainingSeats = event.remainingSeats;
   form.description = event.description;
+
+  open.value = true;
 };
 const onClose = () => {
   open.value = false;
@@ -91,11 +90,12 @@ const handleSubmit = (formRef) => {
     .validate()
     .then(() => {
       try {
-        eventStore.createEvent(form);
+        eventStore.updateEvent(props.id, form).then(() => {
+          emit("editEvent");
+          onClose();
+        });
       } catch (error) {
         message.error(error);
-      } finally {
-        emit("createEvent");
         onClose();
       }
     })
@@ -106,10 +106,7 @@ const handleSubmit = (formRef) => {
 </script>
 
 <template>
-  <div class="tw-flex tw-justify-center">
-    <form-outlined class="trigger_icon" @click="showDrawer" />
-
-  </div>
+  <form-outlined class="trigger_icon" @click="showDrawer" />
   <a-drawer
     title="Edit event"
     :width="720"
@@ -123,6 +120,7 @@ const handleSubmit = (formRef) => {
         <a-col :span="12">
           <a-form-item label="Title" name="title">
             <a-input
+              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
               v-model:value="form.title"
               placeholder="Enter event title"
             />
@@ -131,6 +129,7 @@ const handleSubmit = (formRef) => {
         <a-col :span="12">
           <a-form-item label="Location" name="location">
             <a-input
+              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
               v-model:value="form.location"
               placeholder="Enter event location"
             />
@@ -141,6 +140,7 @@ const handleSubmit = (formRef) => {
         <a-col :span="12">
           <a-form-item label="Total Seats" name="totalSeats">
             <a-input-number
+              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
               :min="0"
               class="tw-w-full"
               v-model:value="form.totalSeats"
@@ -151,6 +151,7 @@ const handleSubmit = (formRef) => {
         <a-col :span="12">
           <a-form-item label="Remaining Seats" name="remainingSeats">
             <a-input-number
+              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
               :min="0"
               class="tw-w-full"
               v-model:value="form.remainingSeats"
@@ -163,6 +164,7 @@ const handleSubmit = (formRef) => {
         <a-col :span="24">
           <a-form-item label="Description" name="description">
             <a-textarea
+              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
               v-model:value="form.description"
               :rows="4"
               placeholder="Enter event description"

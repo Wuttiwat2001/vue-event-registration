@@ -89,11 +89,12 @@ const handleSubmit = (formRef) => {
     .validate()
     .then(() => {
       try {
-        eventStore.createEvent(form);
+        eventStore.createEvent(form).then(() => {
+          emit("createEvent");
+          onClose();
+        });
       } catch (error) {
         message.error(error);
-      } finally {
-        emit("createEvent");
         onClose();
       }
     })
@@ -121,6 +122,7 @@ const handleSubmit = (formRef) => {
         <a-col :span="12">
           <a-form-item label="Title" name="title">
             <a-input
+              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
               v-model:value="form.title"
               placeholder="Enter event title"
             />
@@ -129,6 +131,7 @@ const handleSubmit = (formRef) => {
         <a-col :span="12">
           <a-form-item label="Location" name="location">
             <a-input
+              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
               v-model:value="form.location"
               placeholder="Enter event location"
             />
@@ -139,6 +142,7 @@ const handleSubmit = (formRef) => {
         <a-col :span="12">
           <a-form-item label="Total Seats" name="totalSeats">
             <a-input-number
+              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
               :min="0"
               class="tw-w-full"
               v-model:value="form.totalSeats"
@@ -149,6 +153,7 @@ const handleSubmit = (formRef) => {
         <a-col :span="12">
           <a-form-item label="Remaining Seats" name="remainingSeats">
             <a-input-number
+              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
               :min="0"
               class="tw-w-full"
               v-model:value="form.remainingSeats"
@@ -161,6 +166,7 @@ const handleSubmit = (formRef) => {
         <a-col :span="24">
           <a-form-item label="Description" name="description">
             <a-textarea
+              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
               v-model:value="form.description"
               :rows="4"
               placeholder="Enter event description"
