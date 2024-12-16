@@ -76,11 +76,13 @@ const columns = [
     title: "Created At",
     dataIndex: "createdAt",
     width: 160,
+    sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
   },
   {
     title: "Updated At",
     dataIndex: "updatedAt",
     width: 160,
+    sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
   },
   {
     title: "Action",
