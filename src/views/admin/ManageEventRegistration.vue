@@ -260,13 +260,14 @@ onMounted(() => {
 });
 </script>
 <template>
-  <a-typography-title class="tw-mb-1" :level="2"
-    >Event Registration</a-typography-title
-  >
-  <a-typography-text type="secondary"
-    >Below is a list of all events that are currently open for registration.
-    Click on the event name to proceed.</a-typography-text
-  >
+  <a-typography-title class="tw-mb-1" :level="2">
+    Manage Event Registration
+  </a-typography-title>
+  
+  <a-typography-text type="secondary">
+    Below is a list of all events that are currently open for registration.
+    Click on the event name to manage the event.
+  </a-typography-text>
   <a-row>
     <a-col class="tw-my-5 tw-p-3 tw-bg-[#f5f5f5]" :span="24">
       <a-row :gutter="[16, 0]">
