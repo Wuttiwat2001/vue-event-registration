@@ -3,9 +3,12 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 //user
 import Login from "@/views/user/Login.vue";
+import Register from "@/views/user/Register.vue";
 //admin
 import LoginAdmin from "@/views/admin/LoginAdmin.vue";
 import ManageEventRegistration from "@/views/admin/ManageEventRegistration.vue";
+//public
+import Event from "@/views/Event.vue";
 
 import NoFoundPage from "@/views/NotFoundPage.vue";
 import ErrorPage from "@/views/ErrorPage.vue";
@@ -18,9 +21,19 @@ const routes = [
     component: Login,
   },
   {
+    path: "/register",
+    name: "register",
+    component: Register,
+  },
+  {
     path: "/admin/login",
     name: "admin-login",
     component: LoginAdmin,
+  },
+  {
+    path: "/event",
+    name: "event",
+    component: Event,
   },
   {
     path: "/admin/manage-event-registration",
@@ -45,7 +58,7 @@ const routes = [
   },
   {
     path: "/",
-    redirect: "/login",
+    redirect: "/event",
   },
   {
     path: "/:pathMatch(.*)*",
@@ -69,18 +82,25 @@ router.beforeEach((to, _from, next) => {
         next();
       }
     } else {
-      next("/login");
+      if (to.path.startsWith("/admin")) {
+        next("/admin/login");
+      } else {
+        next("/login");
+      }
     }
   } else {
     if (authStore.user.isLoggedIn) {
-      if (to.name === "notFoundPage" || to.name === "errorPage" || to.name === "authorizedPage") {
+      if (
+        to.name === "notFoundPage" ||
+        to.name === "errorPage" ||
+        to.name === "authorizedPage"
+      ) {
         next();
       } else {
         if (authStore.user.roles.includes("ADMIN")) {
-          router.push("admin/manage-event-registration");
-        } else {
-          console.log("/admin/manage-event-registration")
           router.push("/admin/manage-event-registration");
+        } else {
+          router.push("/event");
         }
       }
     } else {
