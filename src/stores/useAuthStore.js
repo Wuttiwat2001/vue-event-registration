@@ -10,11 +10,37 @@ export const useAuthStore = defineStore("auth", () => {
   });
   const fetchingStatus = ref("init");
 
-  async function login(username, password) {
+  async function userLogin(username, password) {
     fetchingStatus.value = "loading";
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const response = await api.login(username, password);
+      const response = await api.loginUser(username, password);
+      if (response.status === 200 && response.data.success) {
+        Object.assign(user, response.data.data);
+        user.isLoggedIn = true;
+        const token = response.data.token;
+
+        localStorage.setItem("token", JSON.stringify(token));
+        localStorage.setItem("user", JSON.stringify(user));
+        fetchingStatus.value = "success";
+
+        router.push("/event");
+        message.success(`${response.data.message}`);
+      } else {
+        fetchingStatus.value = "failed";
+        user.isLoggedIn = false;
+      }
+    } catch (error) {
+      fetchingStatus.value = "failed";
+      user.isLoggedIn = false;
+    }
+  }
+
+  async function adminLogin(username, password) {
+    fetchingStatus.value = "loading";
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const response = await api.loginAdmin(username, password);
       if (response.status === 200 && response.data.success) {
         Object.assign(user, response.data.data);
         user.isLoggedIn = true;
@@ -51,14 +77,22 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     user.isLoggedIn = false;
-    router.push("/login");
-    message.success("Logout successfully");
+  
+    if (user.roles.includes("ADMIN")) {
+      router.push("/admin/login");
+      message.success("Admin logout successfully");
+    } else {
+      router.push("/login");
+      message.success("User logout successfully");
+    }
   }
 
   return {
     user,
     fetchingStatus,
-    login,
+    userLogin,
+    adminLogin, 
+    logout,
     restoreLogin,
     logout,
   };

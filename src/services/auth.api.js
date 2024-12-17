@@ -1,13 +1,21 @@
 import httpClient from "@/services/httpClient";
 import { server } from "@/services/constants";
 
-const login = async (username,password) => {
-  return httpClient.post(`${server.AUTH_URL}/login`, {
+const loginAdmin = async (username,password) => {
+  return httpClient.post(`${server.AUTH_URL}/users/login`, {
+    username,
+    password,
+  });
+}
+
+const loginUser = async (username,password) => {
+  return httpClient.post(`${server.AUTH_URL}/admins/login`, {
     username,
     password,
   });
 }
 
 export default {
-  login,
+  loginAdmin,
+  loginUser,
 }
