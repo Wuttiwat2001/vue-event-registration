@@ -3,7 +3,6 @@ import { reactive } from "vue";
 import {
   UserOutlined,
   LockOutlined,
-  LoginOutlined,
   PhoneOutlined,
 } from "@ant-design/icons-vue";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -220,7 +219,6 @@ const validatePhone = (rule, value) => {
                   html-type="submit"
                   block
                 >
-                  <LoginOutlined />
                   Register
                 </a-button>
               </a-form-item>
