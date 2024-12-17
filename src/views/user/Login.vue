@@ -5,6 +5,7 @@ import {
   LockOutlined,
   LoginOutlined,
 } from "@ant-design/icons-vue";
+import router from "@/router";
 import { useAuthStore } from "@/stores/useAuthStore";
 const authStore = useAuthStore();
 
@@ -14,6 +15,9 @@ const formState = reactive({
 });
 const onFinish = (values) => {
   authStore.login(values.username, values.password);
+};
+const goToRegister = () => {
+  router.push("/register");
 };
 </script>
 <template>
@@ -80,6 +84,8 @@ const onFinish = (values) => {
                   Login
                 </a-button>
               </a-form-item>
+              Or
+              <a @click="goToRegister">register now!</a>
             </a-form>
           </a-col>
 
