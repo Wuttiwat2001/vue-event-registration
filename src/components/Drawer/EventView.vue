@@ -4,19 +4,33 @@ import { message } from "ant-design-vue";
 import { useEventStore } from "@/stores/useEventStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import router from "@/router";
+import filters from "@/helpers/filters";
 
 const columns = [
   {
     title: "First Name",
     dataIndex: "firstName",
+    key: "firstName",
+    width: "25%",
   },
   {
     title: "Last Name",
     dataIndex: "lastName",
+    key: "lastName",
+    width: "25%",
   },
   {
     title: "Phone",
     dataIndex: "phone",
+    key: "phone",
+    width: "25%",
+  },
+  {
+    title: "Join Date",
+    dataIndex: "joinDate",
+    key: "joinDate",
+    width: "25%",
+    sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
   },
 ];
 
@@ -50,6 +64,8 @@ const showDrawer = async () => {
     pageSize: pageSize.value,
     search: search.value,
   });
+  console.log(data);
+
   registerUsers.value = data.data;
   totalRegisteredUsers.value = data.pagination.total;
 
@@ -195,12 +211,9 @@ const endItem = computed(() => {
 </script>
 
 <template>
-  <a-button
-    @click="showDrawer"
-    :disabled="form.remainingSeats === 0 ? true : false"
-    type="primary"
-    >Join</a-button
-  >
+  <a-button @click="showDrawer" type="primary">{{
+    form.remainingSeats === 0 ? "View" : "Join"
+  }}</a-button>
   <a-drawer
     title="Detail event"
     :width="1000"
@@ -326,101 +339,38 @@ const endItem = computed(() => {
                   :loading="loading"
                   :columns="columns"
                   :data-source="registerUsers"
+                  :row-key="(record) => record.user?._id"
                   :pagination="false"
                   :scroll="{
                     x: 'max-content',
                     y: '50vh',
                   }"
                 >
-                  <!-- <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'title'">
-                      <div class="tw-w-[280px] tw-truncate">
-                        <a-typography-text
-                          @click="onClickSearchItem(record.title)"
-                          class="trigger_text"
-                          strong
-                          >{{ record.title }}</a-typography-text
-                        >
-                        <br />
-                        <a-typography-text
-                          @click="onClickSearchItem(record.description)"
-                          class="trigger_text"
-                          type="secondary"
-                          >{{ record.description }}</a-typography-text
-                        >
-                      </div>
-                    </template>
-                    <template v-if="column.dataIndex === 'location'">
-                      <div class="tw-w-[200px] tw-truncate">
-                        <a-typography-text
-                          @click="onClickSearchItem(record.location)"
-                          class="trigger_text"
-                          strong
-                          >{{ record.location }}</a-typography-text
-                        >
-                      </div>
-                    </template>
-
-                    <template v-else-if="column.dataIndex === 'status'">
-                      <a-tag v-if="record.remainingSeats > 0" color="green"
-                        >Available</a-tag
-                      >
-                      <a-tag v-else color="red">Full</a-tag>
-                    </template>
-
-                    <template v-else-if="column.dataIndex === 'totalSeats'">
+                  <template #bodyCell="{ column, record }">
+                    <template v-if="column.dataIndex === 'firstName'">
                       <a-typography-text>{{
-                        filters.formatNumber(record.totalSeats)
+                        record.user?.firstName
                       }}</a-typography-text>
                     </template>
 
-                    <template v-else-if="column.dataIndex === 'remainingSeats'">
+                    <template v-else-if="column.dataIndex === 'lastName'">
                       <a-typography-text>{{
-                        filters.formatNumber(record.remainingSeats)
+                        record.user?.lastName
                       }}</a-typography-text>
                     </template>
 
-                    <template
-                      v-else-if="column.dataIndex === 'registeredUsers'"
-                    >
-                      <a-typography-text strong>{{
-                        filters.formatNumber(record.registeredUsers.length)
+                    <template v-else-if="column.dataIndex === 'phone'">
+                      <a-typography-text>{{
+                        record.user?.phone
                       }}</a-typography-text>
                     </template>
 
-                    <template v-else-if="column.dataIndex === 'createdAt'">
+                    <template v-else-if="column.dataIndex === 'joinDate'">
                       <a-typography-text type="secondary">{{
-                        filters.formatDate(record.createdAt)
+                        filters.formatDate(record.joinDate)
                       }}</a-typography-text>
                     </template>
-
-                    <template v-else-if="column.dataIndex === 'updatedAt'">
-                      <a-typography-text type="secondary">{{
-                        filters.formatDate(record.updatedAt)
-                      }}</a-typography-text>
-                    </template>
-
-                    <template v-else-if="column.dataIndex === 'action'">
-                      <div class="tw-flex tw-justify-center">
-                        <EventEdit
-                          @editEvent="handleEditEvent"
-                          :id="record._id"
-                        />
-
-                        <a-popconfirm
-                          title="Are you sure delete this event?"
-                          placement="topRight"
-                          ok-text="Yes"
-                          cancel-text="No"
-                          @confirm="() => deleteEvent(record._id)"
-                        >
-                          <delete-outlined
-                            class="trigger_icon tw-ms-2 tw-text-red-500"
-                          />
-                        </a-popconfirm>
-                      </div>
-                    </template>
-                  </template> -->
+                  </template>
                 </a-table>
               </a-col>
               <a-col
