@@ -24,7 +24,7 @@ export const useAuthStore = defineStore("auth", () => {
         localStorage.setItem("user", JSON.stringify(user));
         fetchingStatus.value = "success";
 
-        router.push("/event");
+        router.push("/admin/manage-event-registration");
         message.success(`${response.data.message}`);
       } else {
         fetchingStatus.value = "failed";
@@ -52,6 +52,7 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.removeItem("user");
     user.isLoggedIn = false;
     router.push("/login");
+    message.success("Logout successfully");
   }
 
   return {
