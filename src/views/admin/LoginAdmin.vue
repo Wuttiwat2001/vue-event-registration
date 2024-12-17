@@ -13,7 +13,7 @@ const formState = reactive({
   password: "",
 });
 const onFinish = (values) => {
-  authStore.login(values.username, values.password);
+  authStore.adminLogin(values.username, values.password);
 };
 </script>
 <template>
