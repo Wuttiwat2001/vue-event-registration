@@ -110,7 +110,7 @@ export const useEventStore = defineStore("event", () => {
       const response = await api.eventFindRegisteredUsers(id);
       if (response.status === 200 && response.data.success) {
         fetchingStatus.value = "success";
-        return response.data.data;
+        return response.data;
       } else {
         fetchingStatus.value = "failed";
         return null;
