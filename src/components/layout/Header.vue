@@ -18,7 +18,7 @@ const handleMenuClick = (e) => {
         >Test Backend Developer</a-typography-title
       >
     </div>
-    <div>
+    <div  v-if="authStore.user.isLoggedIn">
       <a-dropdown>
         <a-avatar class="tw-cursor-pointer" :size="40">
           <template #icon>
