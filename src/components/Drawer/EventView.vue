@@ -64,8 +64,6 @@ const showDrawer = async () => {
     pageSize: pageSize.value,
     search: search.value,
   });
-  console.log(data);
-
   registerUsers.value = data.data;
   totalRegisteredUsers.value = data.pagination.total;
 
@@ -400,12 +398,25 @@ const endItem = computed(() => {
           @click="onClose"
           >Cancel</a-button
         >
-        <a-button
-          :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
-          type="primary"
-          @click="joinEvent"
-          >Join</a-button
+
+        <a-popconfirm
+          title="Are you sure join this event?"
+          placement="topRight"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="joinEvent"
         >
+          <a-button
+            :disabled="
+              eventStore.fetchingStatus === 'loading' ||
+              form.remainingSeats === 0
+                ? true
+                : false
+            "
+            type="primary"
+            >Join</a-button
+          >
+        </a-popconfirm>
       </a-space>
     </template>
   </a-drawer>
