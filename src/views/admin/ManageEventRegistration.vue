@@ -57,19 +57,19 @@ const columns = [
   {
     title: "Total Seats",
     dataIndex: "totalSeats",
-    width: 160,
+    width: 180,
     sorter: (a, b) => a.totalSeats - b.totalSeats,
   },
   {
     title: "Remaining Seats",
     dataIndex: "remainingSeats",
-    width: 160,
+    width: 180,
     sorter: (a, b) => a.remainingSeats - b.remainingSeats,
   },
   {
     title: "Registered Users",
     dataIndex: "registeredUsers",
-    width: 160,
+    width: 180,
     sorter: (a, b) => a.registeredUsers.length - b.registeredUsers.length,
   },
   {
@@ -351,6 +351,22 @@ onMounted(() => {
                       type="secondary"
                       >{{ record.description }}</a-typography-text
                     >
+                    <br />
+                    <a-typography-text
+                      @click="
+                        onClickSearchItem(
+                          `${record.createdBy.firstName} ${record.createdBy.lastName}`
+                        )
+                      "
+                      class="trigger_text"
+                      type="secondary"
+                      >Created by:
+                      {{
+                        record.createdBy.firstName +
+                        " " +
+                        record.createdBy.lastName
+                      }}</a-typography-text
+                    >
                   </div>
                 </template>
                 <template v-if="column.dataIndex === 'location'">
@@ -373,19 +389,20 @@ onMounted(() => {
 
                 <template v-else-if="column.dataIndex === 'totalSeats'">
                   <a-typography-text>{{
-                    filters.formatNumber(record.totalSeats)
+                    filters.formatNumber(record.totalSeats) + " seats"
                   }}</a-typography-text>
                 </template>
 
                 <template v-else-if="column.dataIndex === 'remainingSeats'">
                   <a-typography-text>{{
-                    filters.formatNumber(record.remainingSeats)
+                    filters.formatNumber(record.remainingSeats) + " seats"
                   }}</a-typography-text>
                 </template>
 
                 <template v-else-if="column.dataIndex === 'registeredUsers'">
                   <a-typography-text strong>{{
-                    filters.formatNumber(record.registeredUsers.length)
+                    filters.formatNumber(record.registeredUsers.length) +
+                    " users"
                   }}</a-typography-text>
                 </template>
 

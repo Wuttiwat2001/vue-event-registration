@@ -1,6 +1,10 @@
 <script setup>
 import { reactive } from "vue";
-import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
+import {
+  UserOutlined,
+  LockOutlined,
+  LoginOutlined,
+} from "@ant-design/icons-vue";
 import { useAuthStore } from "@/stores/useAuthStore";
 const authStore = useAuthStore();
 
@@ -18,16 +22,16 @@ const onFinish = (values) => {
     justify="center"
     align="middle"
     style="height: 100vh"
-    class="tw-bg-[#f0f2f5] tw-px-10"
+    class="tw-bg-[#f0f2f5] tw-px-[80px]"
   >
     <a-col :span="24" style="max-width: 900px">
       <a-card :bodyStyle="{ padding: '0' }">
         <a-row :gutter="[16, 16]">
-          <a-col class="tw-px-10 tw-py-10 tw-bg-white" :span="24" :md="12">
+          <a-col class="tw-px-[60px] tw-py-10 tw-bg-white" :span="24" :md="12">
             <div class="tw-text-center tw-mb-6">
-              <h2 class="tw-text-2xl">Admin Login</h2>
+              <h2 class="tw-text-2xl">User Login</h2>
               <p class="tw-text-gray-500">
-                Please login to manage the admin dashboard.
+                Please login to access your account.
               </p>
             </div>
             <a-form :model="formState" name="normal_login" @finish="onFinish">
@@ -71,6 +75,8 @@ const onFinish = (values) => {
                   html-type="submit"
                   block
                 >
+                  <LoginOutlined />
+
                   Login
                 </a-button>
               </a-form-item>
@@ -78,12 +84,12 @@ const onFinish = (values) => {
           </a-col>
 
           <a-col class="tw-hidden md:tw-block" :span="24" :md="12">
-            <div class="tw-h-full tw-flex tw-items-center tw-justify-center">
-              <img
-                src="@/assets/images/corporate-event.jpg"
-                alt="Event Registration"
-                class="tw-max-w-full tw-h-full"
-              />
+            <div
+              class="tw-h-full tw-flex tw-items-center tw-justify-center tw-bg-[#1677ff]"
+            >
+              <a-typography-title class="tw-text-white" :level="3"
+                >Event Registration</a-typography-title
+              >
             </div>
           </a-col>
         </a-row>
