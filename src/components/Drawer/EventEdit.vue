@@ -41,7 +41,7 @@ const validateTotalSeats = (rule, value) => {
   if (value <= 0) {
     return Promise.reject("Total seats must be greater than 0");
   }
-  if (value <= totalRegisteredUsers.value) {
+  if (value < totalRegisteredUsers.value) {
     return Promise.reject("Total seats must be greater than or equal to the number of registered users");
   }
   return Promise.resolve();
