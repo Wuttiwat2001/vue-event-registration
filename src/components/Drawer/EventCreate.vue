@@ -111,7 +111,7 @@ const handleSubmit = (formRef) => {
   </a-button>
   <a-drawer
     title="Create a new event"
-    :width="720"
+    :width="1000"
     :open="open"
     :body-style="{ paddingBottom: '80px' }"
     :footer-style="{ textAlign: 'right' }"
