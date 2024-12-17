@@ -104,7 +104,6 @@ const joinEvent = () => {
 };
 
 const search = ref("");
-const joinDate = ref([]);
 
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -144,28 +143,6 @@ const searchTable = async () => {
   loading.value = false;
 };
 
-const selectJoinDate = () => {
-  // if (!createdAtDate.value) {
-  //   createdAtDate.value = [];
-  //   eventStore.fetchEvents(
-  //     currentPage.value,
-  //     pageSize.value,
-  //     search.value,
-  //     availableSeats.value,
-  //     createdAtDate.value,
-  //     updatedAtDate.value
-  //   );
-  // } else {
-  //   eventStore.fetchEvents(
-  //     currentPage.value,
-  //     pageSize.value,
-  //     search.value,
-  //     availableSeats.value,
-  //     createdAtDate.value,
-  //     updatedAtDate.value
-  //   );
-  // }
-};
 
 const handleTableChange = async (paginationOrPageSize, type) => {
   loading.value = true;
@@ -290,16 +267,6 @@ const endItem = computed(() => {
       </a-row>
       <a-row>
         <a-col class="tw-my-5 tw-p-3 tw-bg-[#f5f5f5]" :span="24">
-          <a-row :gutter="[16, 0]">
-            <a-col class="tw-my-3" :span="24" :md="14" :lg="14">
-              <p>Join Date</p>
-              <a-range-picker
-                @change="selectJoinDate"
-                v-model:value="joinDate"
-                class="tw-w-full"
-              />
-            </a-col>
-          </a-row>
           <a-row>
             <a-col class="tw-flex tw-my-3" :span="24" :md="14" :lg="14">
               <a-input

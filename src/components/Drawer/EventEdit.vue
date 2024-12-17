@@ -5,6 +5,8 @@ import { message } from "ant-design-vue";
 import { useEventStore } from "@/stores/useEventStore";
 import filters from "@/helpers/filters";
 
+const search = ref("");
+
 const columns = [
   {
     title: "First Name",
@@ -155,8 +157,6 @@ const handleSubmit = (formRef) => {
     });
 };
 
-const search = ref("");
-const joinDate = ref([]);
 
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -196,28 +196,6 @@ const searchTable = async () => {
   loading.value = false;
 };
 
-const selectJoinDate = () => {
-  // if (!createdAtDate.value) {
-  //   createdAtDate.value = [];
-  //   eventStore.fetchEvents(
-  //     currentPage.value,
-  //     pageSize.value,
-  //     search.value,
-  //     availableSeats.value,
-  //     createdAtDate.value,
-  //     updatedAtDate.value
-  //   );
-  // } else {
-  //   eventStore.fetchEvents(
-  //     currentPage.value,
-  //     pageSize.value,
-  //     search.value,
-  //     availableSeats.value,
-  //     createdAtDate.value,
-  //     updatedAtDate.value
-  //   );
-  // }
-};
 
 const handleTableChange = async (paginationOrPageSize, type) => {
   loading.value = true;
@@ -230,6 +208,8 @@ const handleTableChange = async (paginationOrPageSize, type) => {
       pageSize: pageSize.value,
       search: search.value,
     });
+
+
     registerUsers.value = data.data;
     totalRegisteredUsers.value = data.pagination.total;
   } else if (type === "pageSize") {
@@ -340,16 +320,6 @@ const endItem = computed(() => {
       </a-row>
       <a-row>
         <a-col class="tw-my-5 tw-p-3 tw-bg-[#f5f5f5]" :span="24">
-          <a-row :gutter="[16, 0]">
-            <a-col class="tw-my-3" :span="24" :md="14" :lg="14">
-              <p>Join Date</p>
-              <a-range-picker
-                @change="selectJoinDate"
-                v-model:value="joinDate"
-                class="tw-w-full"
-              />
-            </a-col>
-          </a-row>
           <a-row>
             <a-col class="tw-flex tw-my-3" :span="24" :md="14" :lg="14">
               <a-input
@@ -387,7 +357,7 @@ const endItem = computed(() => {
                   :loading="loading"
                   :columns="columns"
                   :data-source="registerUsers"
-                  :row-key="(record) => record.user?._id"
+                  :row-key="(record) => record.id"
                   :pagination="false"
                   :scroll="{
                     x: 'max-content',
@@ -395,25 +365,7 @@ const endItem = computed(() => {
                   }"
                 >
                   <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'firstName'">
-                      <a-typography-text>{{
-                        record.user?.firstName
-                      }}</a-typography-text>
-                    </template>
-
-                    <template v-else-if="column.dataIndex === 'lastName'">
-                      <a-typography-text>{{
-                        record.user?.lastName
-                      }}</a-typography-text>
-                    </template>
-
-                    <template v-else-if="column.dataIndex === 'phone'">
-                      <a-typography-text>{{
-                        record.user?.phone
-                      }}</a-typography-text>
-                    </template>
-
-                    <template v-else-if="column.dataIndex === 'joinDate'">
+                    <template v-if="column.key === 'joinDate'">
                       <a-typography-text type="secondary">{{
                         filters.formatDate(record.joinDate)
                       }}</a-typography-text>
