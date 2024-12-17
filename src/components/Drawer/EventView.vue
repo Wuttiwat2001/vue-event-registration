@@ -1,8 +1,9 @@
 <script setup>
-import { FormOutlined } from "@ant-design/icons-vue";
 import { reactive, ref, computed } from "vue";
 import { message } from "ant-design-vue";
 import { useEventStore } from "@/stores/useEventStore";
+import { useAuthStore } from "@/stores/useAuthStore";
+import router from "@/router";
 
 const columns = [
   {
@@ -20,6 +21,8 @@ const columns = [
 ];
 
 const eventStore = useEventStore();
+const authStore = useAuthStore();
+
 const props = defineProps({
   id: String,
 });
@@ -36,61 +39,6 @@ const form = reactive({
 
 const registerUsers = ref([]);
 const totalRegisteredUsers = ref(0);
-
-const validateTotalSeats = (rule, value) => {
-  if (value <= 0) {
-    return Promise.reject("Total seats must be greater than 0");
-  }
-  if (value < totalRegisteredUsers.value) {
-    return Promise.reject("Total seats must be greater than or equal to the number of registered users");
-  }
-  return Promise.resolve();
-};
-
-const validateRemainingSeats = (rule, value) => {
-  if (value > form.totalSeats) {
-    return Promise.reject("Remaining seats must not exceed total seats");
-  }
-  if (value > form.totalSeats - totalRegisteredUsers.value) {
-    return Promise.reject("Remaining seats must not be more than the available seats after accounting for registered users");
-  }
-  return Promise.resolve();
-};
-
-const rules = {
-  title: [
-    {
-      required: true,
-      message: "Please input the title!",
-    },
-  ],
-  location: [
-    {
-      required: true,
-      message: "Please input the location!",
-    },
-  ],
-  totalSeats: [
-    {
-      required: true,
-      message: "Please input the total seats!",
-    },
-    { validator: validateTotalSeats },
-  ],
-  remainingSeats: [
-    {
-      required: true,
-      message: "Please input the remaining seats!",
-    },
-    { validator: validateRemainingSeats },
-  ],
-  description: [
-    {
-      required: true,
-      message: "Please input the description!",
-    },
-  ],
-};
 
 const open = ref(false);
 const showDrawer = async () => {
@@ -118,23 +66,18 @@ const onClose = () => {
   open.value = false;
 };
 
-const handleSubmit = (formRef) => {
-  formRef
-    .validate()
-    .then(() => {
-      try {
-        eventStore.updateEvent(props.id, form).then(() => {
-          emit("editEvent");
-          onClose();
-        });
-      } catch (error) {
-        message.error(error);
-        onClose();
-      }
-    })
-    .catch((error) => {
-      message.error(error.errorFields[0].errors);
-    });
+const joinEvent = () => {
+  if(form.remainingSeats === 0) {
+    message.error("Event is full");
+    onClose();
+    return;
+  }
+  else if(authStore.user.isLoggedIn === false) {
+    message.error("Please login first");
+    router.push("/login");
+    onClose();
+    return;
+  }
 };
 
 const search = ref("");
@@ -243,21 +186,26 @@ const endItem = computed(() => {
 </script>
 
 <template>
-  <form-outlined class="trigger_icon" @click="showDrawer" />
+  <a-button
+    @click="showDrawer"
+    :disabled="form.remainingSeats === 0 ? true : false"
+    type="primary"
+    >Join</a-button
+  >
   <a-drawer
-    title="Edit event"
+    title="Detail event"
     :width="1000"
     :open="open"
     :body-style="{ paddingBottom: '80px' }"
     :footer-style="{ textAlign: 'right' }"
     @close="onClose"
   >
-    <a-form :model="form" :rules="rules" layout="vertical" ref="formRef">
+    <a-form :model="form" layout="vertical" ref="formRef">
       <a-row :gutter="16">
         <a-col :span="12">
           <a-form-item label="Title" name="title">
             <a-input
-              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
+              disabled
               v-model:value="form.title"
               placeholder="Enter event title"
             />
@@ -266,7 +214,7 @@ const endItem = computed(() => {
         <a-col :span="12">
           <a-form-item label="Location" name="location">
             <a-input
-              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
+              disabled
               v-model:value="form.location"
               placeholder="Enter event location"
             />
@@ -277,7 +225,7 @@ const endItem = computed(() => {
         <a-col :span="12">
           <a-form-item label="Total Seats" name="totalSeats">
             <a-input-number
-              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
+              disabled
               :min="0"
               class="tw-w-full"
               v-model:value="form.totalSeats"
@@ -288,7 +236,7 @@ const endItem = computed(() => {
         <a-col :span="12">
           <a-form-item label="Remaining Seats" name="remainingSeats">
             <a-input-number
-              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
+              disabled
               :min="0"
               class="tw-w-full"
               v-model:value="form.remainingSeats"
@@ -301,7 +249,7 @@ const endItem = computed(() => {
         <a-col :span="24">
           <a-form-item label="Description" name="description">
             <a-textarea
-              :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
+              disabled
               v-model:value="form.description"
               :rows="4"
               placeholder="Enter event description"
@@ -496,18 +444,11 @@ const endItem = computed(() => {
         <a-button
           :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
           type="primary"
-          @click="handleSubmit($refs.formRef)"
-          >Submit</a-button
+          @click="joinEvent"
+          >Join</a-button
         >
       </a-space>
     </template>
   </a-drawer>
 </template>
-<style scoped>
-.trigger_icon {
-  transition: color 0.3s;
-}
-.trigger_icon:hover {
-  color: #1890ff !important;
-}
-</style>
+<style scoped></style>
