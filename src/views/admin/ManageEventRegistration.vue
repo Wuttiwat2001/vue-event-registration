@@ -170,7 +170,7 @@ const selectUpdatedAtDate = () => {
 
 const handleTableChange = (paginationOrPageSize, type) => {
   if (type === "pagination") {
-    currentPage.value = paginationOrPageSize;
+   currentPage.value = Math.max(paginationOrPageSize, 1);
     eventStore.fetchEvents(
       currentPage.value,
       pageSize.value,
@@ -181,7 +181,7 @@ const handleTableChange = (paginationOrPageSize, type) => {
     );
   } else if (type === "pageSize") {
     currentPage.value = 1;
-    pageSize.value = paginationOrPageSize;
+    pageSize.value = Math.max(paginationOrPageSize, 1);
 
     eventStore.fetchEvents(
       currentPage.value,
@@ -372,9 +372,9 @@ onMounted(() => {
                       type="secondary"
                       >Created by:
                       {{
-                        record.createdBy?.firstName +
+                        record.createdBy.firstName +
                         " " +
-                        record.createdBy?.lastName
+                        record.createdBy.lastName
                       }}</a-typography-text
                     >
                   </div>

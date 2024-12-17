@@ -207,7 +207,7 @@ const selectJoinDate = () => {
 const handleTableChange = async (paginationOrPageSize, type) => {
   loading.value = true;
   if (type === "pagination") {
-    currentPage.value = paginationOrPageSize;
+    currentPage.value = Math.max(paginationOrPageSize, 1);
 
     const data = await eventStore.fetchRegisteredUsers({
       id: props.id,
@@ -219,7 +219,7 @@ const handleTableChange = async (paginationOrPageSize, type) => {
     totalRegisteredUsers.value = data.pagination.total;
   } else if (type === "pageSize") {
     currentPage.value = 1;
-    pageSize.value = paginationOrPageSize;
+    pageSize.value = Math.max(paginationOrPageSize, 1);
 
     const data = await eventStore.fetchRegisteredUsers({
       id: props.id,
@@ -234,6 +234,7 @@ const handleTableChange = async (paginationOrPageSize, type) => {
 };
 
 const startItem = computed(() => {
+  console.log(currentPage.value, pageSize.value);
   return (currentPage.value - 1) * pageSize.value + 1;
 });
 
