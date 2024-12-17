@@ -26,7 +26,7 @@ const authStore = useAuthStore();
 const props = defineProps({
   id: String,
 });
-const emit = defineEmits(["editEvent"]);
+const emit = defineEmits(["joinEvent"]);
 const loading = ref(false);
 
 const form = reactive({
@@ -67,16 +67,25 @@ const onClose = () => {
 };
 
 const joinEvent = () => {
-  if(form.remainingSeats === 0) {
+  if (form.remainingSeats === 0) {
     message.error("Event is full");
     onClose();
     return;
-  }
-  else if(authStore.user.isLoggedIn === false) {
+  } else if (authStore.user.isLoggedIn === false) {
     message.error("Please login first");
     router.push("/login");
     onClose();
     return;
+  } else {
+    eventStore.eventJoin(props.id).then(() => {
+      try {
+        emit("joinEvent");
+        onClose();
+      } catch (error) {
+        message.error(error);
+        onClose();
+      }
+    });
   }
 };
 

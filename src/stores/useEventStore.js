@@ -60,7 +60,7 @@ export const useEventStore = defineStore("event", () => {
         updatedAtDate
       );
       if (response.status === 200 && response.data.success) {
-         events.value = response.data.data
+        events.value = response.data.data;
         totalEvents.value = response.data.pagination.total;
       } else {
         fetchingStatus.value = "failed";
@@ -121,6 +121,21 @@ export const useEventStore = defineStore("event", () => {
     }
   };
 
+  const eventJoin = async (id) => {
+    try {
+      fetchingStatus.value = "loading";
+      const response = await api.eventJoin(id);
+      if (response.status === 200 && response.data.success) {
+        fetchingStatus.value = "success";
+        message.success(`${response.data.message}`);
+      } else {
+        fetchingStatus.value = "failed";
+      }
+    } catch (error) {
+      fetchingStatus.value = "failed";
+    }
+  };
+
   return {
     events,
     fetchingStatus,
@@ -130,6 +145,7 @@ export const useEventStore = defineStore("event", () => {
     createEvent,
     updateEvent,
     removeEvent,
-    fetchRegisteredUsers
+    fetchRegisteredUsers,
+    eventJoin,
   };
 });

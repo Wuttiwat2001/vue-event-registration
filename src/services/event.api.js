@@ -50,11 +50,19 @@ const eventFindRegisteredUsers = async (payload) => {
   });
 }
 
+const eventJoin = async (id) => {
+  const authStore = useAuthStore();
+  return httpClient.post(`${server.EVENT_URL}/join/${id}`, {
+    id: authStore.user.id,
+  });
+};
+
 export default {
   eventCreate,
   eventFindOne,
   eventFindAll,
   eventUpdate,
   eventRemove,
-  eventFindRegisteredUsers
+  eventFindRegisteredUsers,
+  eventJoin
 };

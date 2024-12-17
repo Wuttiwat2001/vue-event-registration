@@ -98,7 +98,6 @@ const columns = [
   },
 ];
 
-
 const searchTable = () => {
   eventStore.fetchEvents(
     currentPage.value,
@@ -169,7 +168,7 @@ const selectUpdatedAtDate = () => {
 
 const handleTableChange = (paginationOrPageSize, type) => {
   if (type === "pagination") {
-   currentPage.value = Math.max(paginationOrPageSize, 1);
+    currentPage.value = Math.max(paginationOrPageSize, 1);
     eventStore.fetchEvents(
       currentPage.value,
       pageSize.value,
@@ -213,6 +212,17 @@ const onClickSearchItem = async (value) => {
   );
 };
 
+const handleJoinEvent = () => {
+  eventStore.fetchEvents(
+    currentPage.value,
+    pageSize.value,
+    search.value,
+    availableSeats.value,
+    createdAtDate.value,
+    updatedAtDate.value
+  );
+};
+
 onMounted(() => {
   eventStore.fetchEvents(
     currentPage.value,
@@ -223,12 +233,9 @@ onMounted(() => {
     updatedAtDate.value
   );
 });
-
 </script>
 <template>
-  <a-typography-title class="tw-mb-1" :level="2"
-    >Event</a-typography-title
-  >
+  <a-typography-title class="tw-mb-1" :level="2">Event</a-typography-title>
   <a-typography-text type="secondary"
     >Below is a list of all events that are currently open for registration.
     Click on the event name to proceed.</a-typography-text
@@ -395,7 +402,7 @@ onMounted(() => {
 
                 <template v-else-if="column.dataIndex === 'action'">
                   <div class="tw-flex tw-justify-center">
-                    <EventView :id="record._id" />
+                    <EventView @joinEvent="handleJoinEvent" :id="record._id" />
                   </div>
                 </template>
               </template>
