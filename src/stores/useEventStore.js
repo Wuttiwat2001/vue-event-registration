@@ -60,7 +60,7 @@ export const useEventStore = defineStore("event", () => {
         updatedAtDate
       );
       if (response.status === 200 && response.data.success) {
-        events.value = response.data.data;
+         events.value = response.data.data
         totalEvents.value = response.data.pagination.total;
       } else {
         fetchingStatus.value = "failed";
@@ -104,10 +104,10 @@ export const useEventStore = defineStore("event", () => {
     }
   };
 
-  const fetchRegisteredUsers = async (id) => {
+  const fetchRegisteredUsers = async (payload) => {
     try {
       fetchingStatus.value = "loading";
-      const response = await api.eventFindRegisteredUsers(id);
+      const response = await api.eventFindRegisteredUsers(payload);
       if (response.status === 200 && response.data.success) {
         fetchingStatus.value = "success";
         return response.data;
