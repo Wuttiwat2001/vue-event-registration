@@ -24,7 +24,7 @@ export const useAuthStore = defineStore("auth", () => {
         localStorage.setItem("user", JSON.stringify(user));
         fetchingStatus.value = "success";
 
-        router.push("/event");
+        router.push("/");
         message.success(`${response.data.message}`);
       } else {
         fetchingStatus.value = "failed";
@@ -77,7 +77,7 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     user.isLoggedIn = false;
-  
+
     if (user.roles.includes("ADMIN")) {
       router.push("/admin/login");
       message.success("Admin logout successfully");
@@ -87,13 +87,31 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  async function register(payload) {
+    fetchingStatus.value = "loading";
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const response = await api.registerUser(payload);
+      if (response.status === 201 && response.data.success) {
+        fetchingStatus.value = "success";
+        message.success(`${response.data.message}`);
+        router.push("/login");
+      } else {
+        fetchingStatus.value = "failed";
+      }
+    } catch (error) {
+      fetchingStatus.value = "failed";
+    }
+  }
+
   return {
     user,
     fetchingStatus,
     userLogin,
-    adminLogin, 
+    adminLogin,
     logout,
     restoreLogin,
     logout,
+    register,
   };
 });

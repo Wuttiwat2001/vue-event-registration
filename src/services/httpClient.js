@@ -46,7 +46,7 @@ httpClient.interceptors.response.use(
           router.push("/login");
           break;
         case 403:
-          console.error("Forbidden:", response.data.error);
+          message.error(`${response.data.error}`);
           router.push("/403");
           break;
         case 404:
