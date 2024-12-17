@@ -42,51 +42,60 @@ const columns = [
   {
     title: "Title",
     dataIndex: "title",
+    key: "title",
     width: 280,
   },
   {
     title: "Location",
     dataIndex: "location",
+    key: "location",
     width: 200,
   },
   {
     title: "Status",
     dataIndex: "status",
+    key: "status",
     width: 120,
   },
   {
     title: "Total Seats",
     dataIndex: "totalSeats",
+    key: "totalSeats",
     width: 180,
     sorter: (a, b) => a.totalSeats - b.totalSeats,
   },
   {
     title: "Remaining Seats",
     dataIndex: "remainingSeats",
+    key: "remainingSeats",
     width: 180,
     sorter: (a, b) => a.remainingSeats - b.remainingSeats,
   },
   {
     title: "Registered Users",
     dataIndex: "registeredUsers",
+    key: "registeredUsers",
     width: 180,
     sorter: (a, b) => a.registeredUsers.length - b.registeredUsers.length,
   },
   {
     title: "Created At",
     dataIndex: "createdAt",
+    key: "createdAt",
     width: 160,
     sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
   },
   {
     title: "Updated At",
     dataIndex: "updatedAt",
+    key: "updatedAt",
     width: 160,
     sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
   },
   {
     title: "Action",
     dataIndex: "action",
+    key: "action",
     width: 80,
   },
 ];
@@ -330,6 +339,7 @@ onMounted(() => {
               :columns="columns"
               :data-source="eventStore.events"
               :pagination="false"
+              :row-key="(record) => record._id"
               :scroll="{
                 x: 'max-content',
                 y: '50vh',
@@ -362,9 +372,9 @@ onMounted(() => {
                       type="secondary"
                       >Created by:
                       {{
-                        record.createdBy.firstName +
+                        record.createdBy?.firstName +
                         " " +
-                        record.createdBy.lastName
+                        record.createdBy?.lastName
                       }}</a-typography-text
                     >
                   </div>
