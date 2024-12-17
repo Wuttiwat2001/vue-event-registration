@@ -182,12 +182,20 @@ const handleSubmit = (formRef) => {
           @click="onClose"
           >Cancel</a-button
         >
-        <a-button
-          :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
-          type="primary"
-          @click="handleSubmit($refs.formRef)"
-          >Submit</a-button
+
+        <a-popconfirm
+          title="Are you sure create this event?"
+          placement="topRight"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="handleSubmit($refs.formRef)"
         >
+          <a-button
+            :disabled="eventStore.fetchingStatus === 'loading' ? true : false"
+            type="primary"
+            >Create</a-button
+          >
+        </a-popconfirm>
       </a-space>
     </template>
   </a-drawer>
