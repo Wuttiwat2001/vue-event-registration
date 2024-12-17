@@ -48,9 +48,6 @@ const validateTotalSeats = (rule, value) => {
 };
 
 const validateRemainingSeats = (rule, value) => {
-  if (value <= 0) {
-    return Promise.reject("Remaining seats must be greater than 0");
-  }
   if (value > form.totalSeats) {
     return Promise.reject("Remaining seats must not exceed total seats");
   }
