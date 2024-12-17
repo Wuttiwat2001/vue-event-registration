@@ -14,7 +14,7 @@ const formState = reactive({
   password: "",
 });
 const onFinish = (values) => {
-  authStore.login(values.username, values.password);
+  authStore.userLogin(values.username, values.password);
 };
 const goToRegister = () => {
   router.push("/register");
@@ -48,6 +48,9 @@ const goToRegister = () => {
                 <a-input
                   v-model:value="formState.username"
                   placeholder="Username"
+                  :disabled="
+                    authStore.fetchingStatus === 'loading' ? true : false
+                  "
                 >
                   <template #prefix>
                     <user-outlined class="site-form-item-icon" />
@@ -64,6 +67,9 @@ const goToRegister = () => {
                 <a-input-password
                   v-model:value="formState.password"
                   placeholder="Password"
+                  :disabled="
+                    authStore.fetchingStatus === 'loading' ? true : false
+                  "
                 >
                   <template #prefix>
                     <lock-outlined class="site-form-item-icon" />
@@ -85,7 +91,10 @@ const goToRegister = () => {
                 </a-button>
               </a-form-item>
               Or
-              <a @click="goToRegister">register now!</a>
+              <a
+                @click="goToRegister"
+                >register now!</a
+              >
             </a-form>
           </a-col>
 

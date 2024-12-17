@@ -19,9 +19,11 @@ const formState = reactive({
   firstName: "",
   lastName: "",
   phone: "",
+  roles: ["USER"]
 });
 
 const onFinish = (values) => {
+  values.phone = `+66${values.phone}`;
   authStore.register(values);
 };
 
@@ -31,7 +33,9 @@ const goToLogin = () => {
 
 const validatePhone = (rule, value) => {
   if (!/^[1-9]\d{8}$/.test(value)) {
-    return Promise.reject("Phone number should be exactly 9 digits and not start with 0");
+    return Promise.reject(
+      "Phone number should be exactly 9 digits and not start with 0"
+    );
   }
   return Promise.resolve();
 };
@@ -58,18 +62,26 @@ const validatePhone = (rule, value) => {
             <a-form :model="formState" name="register" @finish="onFinish">
               <a-form-item
                 name="username"
-                :rules="[{
-                  required: true,
-                  message: 'Please input your username!',
-                }, {
-                  min: 4,
-                  message: 'Username should be at least 4 characters',
-                }, {
-                  pattern: /^[A-Za-z0-9]+$/,
-                  message: 'Username should contain only alphanumeric characters',
-                }]"
+                :rules="[
+                  {
+                    required: true,
+                    message: 'Please input your username!',
+                  },
+                  {
+                    min: 4,
+                    message: 'Username should be at least 4 characters',
+                  },
+                  {
+                    pattern: /^[A-Za-z0-9]+$/,
+                    message:
+                      'Username should contain only alphanumeric characters',
+                  },
+                ]"
               >
                 <a-input
+                  :disabled="
+                    authStore.fetchingStatus === 'loading' ? true : false
+                  "
                   v-model:value="formState.username"
                   placeholder="Username"
                 >
@@ -81,15 +93,21 @@ const validatePhone = (rule, value) => {
 
               <a-form-item
                 name="password"
-                :rules="[{
-                  required: true,
-                  message: 'Please input your password!',
-                }, {
-                  min: 5,
-                  message: 'Password should be at least 5 characters',
-                }]"
+                :rules="[
+                  {
+                    required: true,
+                    message: 'Please input your password!',
+                  },
+                  {
+                    min: 5,
+                    message: 'Password should be at least 5 characters',
+                  },
+                ]"
               >
                 <a-input-password
+                  :disabled="
+                    authStore.fetchingStatus === 'loading' ? true : false
+                  "
                   v-model:value="formState.password"
                   placeholder="Password"
                 >
@@ -101,12 +119,17 @@ const validatePhone = (rule, value) => {
 
               <a-form-item
                 name="confirmPassword"
-                :rules="[{
-                  required: true,
-                  message: 'Please confirm your password!',
-                }]"
+                :rules="[
+                  {
+                    required: true,
+                    message: 'Please confirm your password!',
+                  },
+                ]"
               >
                 <a-input-password
+                  :disabled="
+                    authStore.fetchingStatus === 'loading' ? true : false
+                  "
                   v-model:value="formState.confirmPassword"
                   placeholder="Confirm Password"
                 >
@@ -118,15 +141,22 @@ const validatePhone = (rule, value) => {
 
               <a-form-item
                 name="firstName"
-                :rules="[{
-                  required: true,
-                  message: 'Please input your first name!',
-                }, {
-                  pattern: /^[A-Za-z]+$/,
-                  message: 'First name should contain only alphabetic characters',
-                }]"
+                :rules="[
+                  {
+                    required: true,
+                    message: 'Please input your first name!',
+                  },
+                  {
+                    pattern: /^[A-Za-z]+$/,
+                    message:
+                      'First name should contain only alphabetic characters',
+                  },
+                ]"
               >
                 <a-input
+                  :disabled="
+                    authStore.fetchingStatus === 'loading' ? true : false
+                  "
                   v-model:value="formState.firstName"
                   placeholder="First Name"
                 />
@@ -134,15 +164,22 @@ const validatePhone = (rule, value) => {
 
               <a-form-item
                 name="lastName"
-                :rules="[{
-                  required: true,
-                  message: 'Please input your last name!',
-                }, {
-                  pattern: /^[A-Za-z]+$/,
-                  message: 'Last name should contain only alphabetic characters',
-                }]"
+                :rules="[
+                  {
+                    required: true,
+                    message: 'Please input your last name!',
+                  },
+                  {
+                    pattern: /^[A-Za-z]+$/,
+                    message:
+                      'Last name should contain only alphabetic characters',
+                  },
+                ]"
               >
                 <a-input
+                  :disabled="
+                    authStore.fetchingStatus === 'loading' ? true : false
+                  "
                   v-model:value="formState.lastName"
                   placeholder="Last Name"
                 />
@@ -150,14 +187,20 @@ const validatePhone = (rule, value) => {
 
               <a-form-item
                 name="phone"
-                :rules="[{
-                  required: true,
-                  message: 'Please input your phone number!',
-                }, {
-                  validator: validatePhone,
-                }]"
+                :rules="[
+                  {
+                    required: true,
+                    message: 'Please input your phone number!',
+                  },
+                  {
+                    validator: validatePhone,
+                  },
+                ]"
               >
                 <a-input
+                  :disabled="
+                    authStore.fetchingStatus === 'loading' ? true : false
+                  "
                   addon-before="+66"
                   v-model:value="formState.phone"
                   placeholder="Phone Number"
@@ -170,7 +213,9 @@ const validatePhone = (rule, value) => {
 
               <a-form-item>
                 <a-button
-                  :loading="authStore.fetchingStatus === 'loading' ? true : false"
+                  :loading="
+                    authStore.fetchingStatus === 'loading' ? true : false
+                  "
                   type="primary"
                   html-type="submit"
                   block
@@ -180,7 +225,10 @@ const validatePhone = (rule, value) => {
                 </a-button>
               </a-form-item>
               Or
-              <a @click="goToLogin">login now!</a>
+              <a
+                @click="goToLogin"
+                >login now!</a
+              >
             </a-form>
           </a-col>
 
