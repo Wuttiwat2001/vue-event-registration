@@ -90,18 +90,16 @@ router.beforeEach((to, _from, next) => {
     }
   } else {
     if (authStore.user.isLoggedIn) {
-      if (
-        to.name === "notFoundPage" ||
-        to.name === "errorPage" ||
-        to.name === "authorizedPage"
-      ) {
-        next();
-      } else {
+      if (to.name === "login" || to.name === "register" || to.name === "admin-login") {
         if (authStore.user.roles.includes("ADMIN")) {
-          router.push("/admin/manage-event-registration");
+          next("/admin/manage-event-registration");
         } else {
-          router.push("/event");
+          next("/event");
         }
+      } else if (to.name === "event" && authStore.user.roles.includes("ADMIN")) {
+        next("/admin/manage-event-registration");
+      } else {
+        next();
       }
     } else {
       next();
