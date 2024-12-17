@@ -1,14 +1,30 @@
 <script setup>
 import { FormOutlined } from "@ant-design/icons-vue";
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from "vue";
 import { message } from "ant-design-vue";
 import { useEventStore } from "@/stores/useEventStore";
+
+const columns = [
+  {
+    title: "First Name",
+    dataIndex: "firstName",
+  },
+  {
+    title: "Last Name",
+    dataIndex: "lastName",
+  },
+  {
+    title: "Phone",
+    dataIndex: "phone",
+  },
+];
 
 const eventStore = useEventStore();
 const props = defineProps({
   id: String,
 });
 const emit = defineEmits(["editEvent"]);
+const loading = ref(false);
 
 const form = reactive({
   title: "",
@@ -19,10 +35,14 @@ const form = reactive({
 });
 
 const registerUsers = ref([]);
+const totalRegisteredUsers = ref(0);
 
 const validateTotalSeats = (rule, value) => {
   if (value <= 0) {
     return Promise.reject("Total seats must be greater than 0");
+  }
+  if (value <= totalRegisteredUsers.value) {
+    return Promise.reject("Total seats must be greater than or equal to the number of registered users");
   }
   return Promise.resolve();
 };
@@ -33,6 +53,9 @@ const validateRemainingSeats = (rule, value) => {
   }
   if (value > form.totalSeats) {
     return Promise.reject("Remaining seats must not exceed total seats");
+  }
+  if (value > form.totalSeats - totalRegisteredUsers.value) {
+    return Promise.reject("Remaining seats must not be more than the available seats after accounting for registered users");
   }
   return Promise.resolve();
 };
@@ -74,8 +97,17 @@ const rules = {
 
 const open = ref(false);
 const showDrawer = async () => {
+  loading.value = true;
   const event = await eventStore.fetchEvent(props.id);
-  const registerUsers = await eventStore.fetchRegisteredUsers(props.id);
+  const data = await eventStore.fetchRegisteredUsers({
+    id: props.id,
+    currentPage: currentPage.value,
+    pageSize: pageSize.value,
+    search: search.value,
+  });
+  registerUsers.value = data.data;
+  totalRegisteredUsers.value = data.pagination.total;
+
   form.title = event.title;
   form.location = event.location;
   form.totalSeats = event.totalSeats;
@@ -83,6 +115,7 @@ const showDrawer = async () => {
   form.description = event.description;
 
   open.value = true;
+  loading.value = false;
 };
 const onClose = () => {
   open.value = false;
@@ -135,18 +168,18 @@ const pageSizeOptions = [
   },
 ];
 
-
-const searchTable = () => {
-  // eventStore.fetchEvents(
-  //   currentPage.value,
-  //   pageSize.value,
-  //   search.value,
-  //   availableSeats.value,
-  //   createdAtDate.value,
-  //   updatedAtDate.value
-  // );
+const searchTable = async () => {
+  loading.value = true;
+  const data = await eventStore.fetchRegisteredUsers({
+    id: props.id,
+    currentPage: currentPage.value,
+    pageSize: pageSize.value,
+    search: search.value,
+  });
+  registerUsers.value = data.data;
+  totalRegisteredUsers.value = data.pagination.total;
+  loading.value = false;
 };
-
 
 const selectJoinDate = () => {
   // if (!createdAtDate.value) {
@@ -171,14 +204,52 @@ const selectJoinDate = () => {
   // }
 };
 
+const handleTableChange = async (paginationOrPageSize, type) => {
+  loading.value = true;
+  if (type === "pagination") {
+    currentPage.value = paginationOrPageSize;
 
+    const data = await eventStore.fetchRegisteredUsers({
+      id: props.id,
+      currentPage: currentPage.value,
+      pageSize: pageSize.value,
+      search: search.value,
+    });
+    registerUsers.value = data.data;
+    totalRegisteredUsers.value = data.pagination.total;
+  } else if (type === "pageSize") {
+    currentPage.value = 1;
+    pageSize.value = paginationOrPageSize;
+
+    const data = await eventStore.fetchRegisteredUsers({
+      id: props.id,
+      currentPage: currentPage.value,
+      pageSize: pageSize.value,
+      search: search.value,
+    });
+    registerUsers.value = data.data;
+    totalRegisteredUsers.value = data.pagination.total;
+  }
+  loading.value = false;
+};
+
+const startItem = computed(() => {
+  return (currentPage.value - 1) * pageSize.value + 1;
+});
+
+const endItem = computed(() => {
+  return Math.min(
+    currentPage.value * pageSize.value,
+    totalRegisteredUsers.value
+  );
+});
 </script>
 
 <template>
   <form-outlined class="trigger_icon" @click="showDrawer" />
   <a-drawer
     title="Edit event"
-    :width="720"
+    :width="1000"
     :open="open"
     :body-style="{ paddingBottom: '80px' }"
     :footer-style="{ textAlign: 'right' }"
@@ -255,7 +326,7 @@ const selectJoinDate = () => {
       <a-row>
         <a-col class="tw-my-5 tw-p-3 tw-bg-[#f5f5f5]" :span="24">
           <a-row :gutter="[16, 0]">
-            <a-col class="tw-my-3" :span="24" :md="12" :lg="12">
+            <a-col class="tw-my-3" :span="24" :md="14" :lg="14">
               <p>Join Date</p>
               <a-range-picker
                 @change="selectJoinDate"
@@ -265,7 +336,7 @@ const selectJoinDate = () => {
             </a-col>
           </a-row>
           <a-row>
-            <a-col class="tw-flex tw-my-3" :span="24" :md="12" :lg="12">
+            <a-col class="tw-flex tw-my-3" :span="24" :md="14" :lg="14">
               <a-input
                 @keyup.enter="searchTable"
                 v-model:value="search"
@@ -279,7 +350,7 @@ const selectJoinDate = () => {
         </a-col>
       </a-row>
 
-      <!-- <a-row>
+      <a-row>
         <a-col :span="24">
           <a-card class="tw-rounded-none" :bodyStyle="{ padding: '0' }">
             <a-row>
@@ -292,25 +363,22 @@ const selectJoinDate = () => {
                       :options="pageSizeOptions"
                       @change="(value) => handleTableChange(value, 'pageSize')"
                     ></a-select>
-                    <EventCreate @createEvent="handleCreateEvent" />
                   </a-col>
                 </a-row>
               </a-col>
               <a-divider class="tw-m-0" />
               <a-col :span="24">
                 <a-table
-                  :loading="
-                    eventStore.fetchingStatus === 'loading' ? true : false
-                  "
+                  :loading="loading"
                   :columns="columns"
-                  :data-source="eventStore.events"
+                  :data-source="registerUsers"
                   :pagination="false"
                   :scroll="{
                     x: 'max-content',
                     y: '50vh',
                   }"
                 >
-                  <template #bodyCell="{ column, record }">
+                  <!-- <template #bodyCell="{ column, record }">
                     <template v-if="column.dataIndex === 'title'">
                       <div class="tw-w-[280px] tw-truncate">
                         <a-typography-text
@@ -398,7 +466,7 @@ const selectJoinDate = () => {
                         </a-popconfirm>
                       </div>
                     </template>
-                  </template>
+                  </template> -->
                 </a-table>
               </a-col>
               <a-col
@@ -410,7 +478,7 @@ const selectJoinDate = () => {
                 </a-typography-text>
                 <a-pagination
                   v-model:current="currentPage"
-                  :total="eventStore.totalEvents"
+                  :total="totalRegisteredUsers"
                   :show-size-changer="false"
                   :pageSize="pageSize"
                   @change="(value) => handleTableChange(value, 'pagination')"
@@ -419,7 +487,7 @@ const selectJoinDate = () => {
             </a-row>
           </a-card>
         </a-col>
-      </a-row> -->
+      </a-row>
     </a-form>
     <template #extra>
       <a-space>
