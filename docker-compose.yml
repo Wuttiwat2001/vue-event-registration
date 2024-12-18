@@ -1,0 +1,11 @@
+services:
+  event-registration-services-app:
+    build: .
+    ports:
+      - "80:3000"
+    networks: 
+      - event-registration-network
+
+networks:
+  event-registration-network:
+    driver: bridge
