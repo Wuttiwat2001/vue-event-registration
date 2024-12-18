@@ -185,7 +185,7 @@ const handleSubmit = (formRef) => {
 
         <a-popconfirm
           title="Are you sure create this event?"
-          placement="topRight"
+          placement="bottomRight"
           ok-text="Yes"
           cancel-text="No"
           @confirm="handleSubmit($refs.formRef)"

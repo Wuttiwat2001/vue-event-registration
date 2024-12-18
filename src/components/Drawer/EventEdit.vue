@@ -402,7 +402,7 @@ const endItem = computed(() => {
         >
         <a-popconfirm
           title="Are you sure join this event?"
-          placement="topRight"
+          placement="bottomRight"
           ok-text="Yes"
           cancel-text="No"
           @confirm="handleSubmit($refs.formRef)"

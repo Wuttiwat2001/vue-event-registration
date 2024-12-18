@@ -435,7 +435,7 @@ onMounted(() => {
 
                     <a-popconfirm
                       title="Are you sure delete this event?"
-                      placement="topRight"
+                      placement="bottomRight"
                       ok-text="Yes"
                       cancel-text="No"
                       @confirm="() => deleteEvent(record._id)"
