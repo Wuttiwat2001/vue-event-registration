@@ -3,7 +3,11 @@ export default {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   important: true,
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        kanit: ['Kanit', 'sans-serif'], 
+      },
+    },
   },
   plugins: [],
   corePlugins: { preflight: false },

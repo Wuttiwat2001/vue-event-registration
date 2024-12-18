@@ -21,14 +21,22 @@ onMounted(() => {
 });
 </script>
 <template>
-  <a-layout class="tw-min-h-screen">
-    <a-layout>
-      <Header
-        v-if="!isRouteErrorPage && (isEventPage || authStore.user.isLoggedIn)"
-      />
-      <Content />
+  <a-config-provider
+    :theme="{
+      token: {
+        fontFamily: 'Kanit, sans-serif',
+      },
+    }"
+  >
+    <a-layout class="tw-min-h-screen">
+      <a-layout>
+        <Header
+          v-if="!isRouteErrorPage && (isEventPage || authStore.user.isLoggedIn)"
+        />
+        <Content />
+      </a-layout>
     </a-layout>
-  </a-layout>
+  </a-config-provider>
 </template>
 
 <style></style>
