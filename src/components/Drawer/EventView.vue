@@ -143,7 +143,6 @@ const searchTable = async () => {
   loading.value = false;
 };
 
-
 const handleTableChange = async (paginationOrPageSize, type) => {
   loading.value = true;
   if (type === "pagination") {
@@ -304,7 +303,7 @@ const endItem = computed(() => {
                   :loading="loading"
                   :columns="columns"
                   :data-source="registerUsers"
-                  :row-key="(record) => record.user?._id"
+                  :row-key="(record) => record._id"
                   :pagination="false"
                   :scroll="{
                     x: 'max-content',
@@ -312,25 +311,7 @@ const endItem = computed(() => {
                   }"
                 >
                   <template #bodyCell="{ column, record }">
-                    <template v-if="column.dataIndex === 'firstName'">
-                      <a-typography-text>{{
-                        record.user?.firstName
-                      }}</a-typography-text>
-                    </template>
-
-                    <template v-else-if="column.dataIndex === 'lastName'">
-                      <a-typography-text>{{
-                        record.user?.lastName
-                      }}</a-typography-text>
-                    </template>
-
-                    <template v-else-if="column.dataIndex === 'phone'">
-                      <a-typography-text>{{
-                        record.user?.phone
-                      }}</a-typography-text>
-                    </template>
-
-                    <template v-else-if="column.dataIndex === 'joinDate'">
+                    <template v-if="column.dataIndex === 'joinDate'">
                       <a-typography-text type="secondary">{{
                         filters.formatDate(record.joinDate)
                       }}</a-typography-text>
